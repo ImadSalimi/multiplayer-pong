@@ -24,6 +24,30 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		addKeyListener(this);
 		setFocusable(true);
 	}
+	
+	public Paddle getPlayer(PlayerId id) {
+		if (id == PlayerId.ONE)
+			return player1;
+		else
+			return player2;
+	}
+	
+	public void increaseScoreFor(PlayerId id) {
+		if (id == PlayerId.ONE)
+			score1++;
+		else
+			score2++;
+	}
+	
+	public int getScore(PlayerId id) {
+		return id == PlayerId.ONE ? score1 : score2; 
+	}
+	
+	private void update() {
+		ball.update();
+		player1.update();
+		player2.update()
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
