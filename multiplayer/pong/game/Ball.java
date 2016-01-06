@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 public class Ball {
 	private static final int WIDTH = 30, HEIGHT = 30;
     private Pong game;
-    private int x, y, xa = 2, ya = 2;
+    private int x, y, xa = 4, ya = 4;
     
     public Ball(Pong game) {
     	this.game = game;
