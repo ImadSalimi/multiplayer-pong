@@ -10,11 +10,11 @@ public abstract class DAO {
 	MongoClient mongoClient;
 	MongoDatabase db;
 	MongoCollection<Document> collection;
-	private String host;
-	private int port;
+	private String host = "localhost";
+	private int port = 27017;
 	
 	public DAO(String collection) {
-		this.mongoClient = new MongoClient();
+		this.mongoClient = new MongoClient(host, port);
 		this.db = mongoClient.getDatabase("test");
 		this.collection = db.getCollection(collection);
 	}

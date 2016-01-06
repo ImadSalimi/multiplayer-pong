@@ -1,7 +1,6 @@
 package multiplayer.pong.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Vector;
 
 import org.bson.Document;
 
@@ -16,8 +15,8 @@ public class UsersDAO extends DAO {
 		super("users");
 	}
 	
-	public List<User> findAll() {
-		List<User> users = new ArrayList<User>();
+	public Vector<User> findAll() {
+		Vector<User> users = new Vector<User>();
 		FindIterable<Document> it = this.collection.find();
 		it.forEach(new Block<Document>() {
 			public void apply(final Document document) {
@@ -25,6 +24,16 @@ public class UsersDAO extends DAO {
 			}
 		});
 		return users;
+	}
+	
+	public User findByUsername(String username) {
+		Vector<User> users = findAll();
+		User res = null;
+		for (int i = 0; i < users.size(); i++) {
+				res = users.get(i);
+				System.out.println(res.getName().toLowerCase() == username.toLowerCase());
+		}
+		return res;
 	}
 
 }
