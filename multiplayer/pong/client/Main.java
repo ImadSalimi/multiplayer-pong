@@ -15,8 +15,7 @@ import static com.mongodb.client.model.Filters.*;
 public class Main {
 
 	public static void main(String[] args) {
-		UsersDAO daoUsers = new UsersDAO();
-		System.out.println(daoUsers.findByUsername("Iyad"));
+		
 	}
 
 }
