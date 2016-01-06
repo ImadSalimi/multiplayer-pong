@@ -30,8 +30,10 @@ public class UsersDAO extends DAO {
 		Vector<User> users = findAll();
 		User res = null;
 		for (int i = 0; i < users.size(); i++) {
+			if (users.get(i).getName().equals(username)) {
 				res = users.get(i);
-				System.out.println(res.getName().toLowerCase() == username.toLowerCase());
+				break;
+			}
 		}
 		return res;
 	}
