@@ -1,6 +1,6 @@
 package multiplayer.pong.game;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Paddle {
@@ -10,7 +10,8 @@ public class Paddle {
     private int up, down;
     private int x;
     // ya is velocity in the y-axis
-    private int y, ya;
+    private int y, ya = 2;
+    private boolean goingUp = false, goingDown = false;
 
     
     public Paddle(Pong game, int up, int down, int x) {
@@ -22,31 +23,28 @@ public class Paddle {
     }
 
     public void update() {
-        if (y > 0 && y < game.getHeight() - HEIGHT - 29)
-            y += ya;
-        else if (y == 0)
-            y++;
-        else if (y == game.getHeight() - HEIGHT - 29)
-            y--;
+        if (goingUp && y > 0) y--;
+        else if (goingDown && y + HEIGHT < game.getHeight()) y++;
     }
     
     public void pressed(int keyCode) {
         if (keyCode == up)
-            ya = -1;
+            goingUp = true;
         else if (keyCode == down)
-            ya = 1;
+            goingDown = true;
     }
 
     public void released(int keyCode) {
-        if (keyCode == up || keyCode == down)
-            ya = 0;
+        if (keyCode == up || keyCode == down) {
+        	goingUp = goingDown = false;
+        }
     }
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, WIDTH, HEIGHT);
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics2D g) {
         g.fillRect(x, y, WIDTH, HEIGHT);
     }
 

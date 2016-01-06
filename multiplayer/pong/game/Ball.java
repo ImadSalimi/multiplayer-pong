@@ -1,7 +1,7 @@
 package multiplayer.pong.game;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import javax.swing.JOptionPane;
@@ -20,22 +20,16 @@ public class Ball {
     public void update() {
         x += xa;
         y += ya;
-        if (x < 0) {
+        if (x <= 0) {
             game.getPanel().increaseScoreFor(1);
-            x = game.getWidth() / 2;
             xa = -xa;
         }
-        else if (x > game.getWidth() - WIDTH - 7) {
+        else if (x >= game.getWidth() - WIDTH) {
             game.getPanel().increaseScoreFor(2);
-            x = game.getWidth() / 2;
             xa = -xa;
         }
-        else if (y < 0 || y > game.getHeight() - HEIGHT - 29)
+        else if (y < 0 || y >= game.getHeight() - HEIGHT)
             ya = -ya;
-        if (game.getPanel().getScore(1) == 10)
-            JOptionPane.showMessageDialog(null, "Player 1 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
-        else if (game.getPanel().getScore(2) == 10)
-            JOptionPane.showMessageDialog(null, "Player 2 wins", "Pong", JOptionPane.PLAIN_MESSAGE);
         checkCollision();
     }
     
@@ -48,7 +42,7 @@ public class Ball {
         return new Rectangle(x, y, WIDTH, HEIGHT);
     }
     
-    public void paint(Graphics g) {
+    public void paint(Graphics2D g) {
         g.fillRect(x, y, WIDTH, HEIGHT);
     }
 }

@@ -2,10 +2,12 @@ package multiplayer.pong.game;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -22,7 +24,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		ball = new Ball(game);
 		player1 = new Paddle(game, KeyEvent.VK_UP, KeyEvent.VK_DOWN, game.getWidth() - Paddle.WIDTH - 20);
 		player2 = new Paddle(game, KeyEvent.VK_Z, KeyEvent.VK_S, 20);		
-		Timer timer = new Timer(20, this);
+		Timer timer = new Timer(5, this);
 		timer.start();
 		addKeyListener(this);
 		setFocusable(true);
@@ -73,14 +75,17 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.setColor(Color.black);
-		g.fillRect(0, 0, game.getWidth(), game.getHeight());
-		g.setColor(Color.white);
-		g.drawString(game.getPanel().getScore(1) + " : " + game.getPanel().getScore(2), game.getWidth() / 2, 20);
+		BufferedImage bufferedImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
+		g2d.setColor(Color.black);
+		g2d.fillRect(0, 0, game.getWidth(), game.getHeight());
+		g2d.setColor(Color.white);
+		g2d.drawString(game.getPanel().getScore(1) + " : " + game.getPanel().getScore(2), game.getWidth() / 2, 20);
 		
-		ball.paint(g);
-		player1.paint(g);
-		player2.paint(g);
+		ball.paint(g2d);
+		player1.paint(g2d);
+		player2.paint(g2d);
+		g.drawImage(bufferedImage, 0, 0, null);
 	}
 	
 }
