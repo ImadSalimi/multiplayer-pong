@@ -5,6 +5,7 @@ import org.bson.Document;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import static com.mongodb.client.model.Filters.*;
@@ -20,13 +21,10 @@ public class Main {
 
 	public static void main(String[] args) {
 		Main main = new Main();
-		FindIterable<Document> iterable = main.db.getCollection("users").find(eq("password", "maticha"));
-		iterable.forEach(new Block<Document>() {
-			@Override
-			public void apply(final Document document) {
-				System.out.println(document.getString("name"));
-			}
-		});
+		MongoCollection<Document> users = main.db.getCollection("users");
+		FindIterable<Document> iterable = users.find(new Document("name", "Iyad"));
+		System.out.println(iterable.first());
+		
 	}
 
 }
