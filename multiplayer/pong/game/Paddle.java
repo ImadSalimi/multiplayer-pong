@@ -32,9 +32,9 @@ public class Paddle {
     
     public void pressed(int keyCode) {
         if (keyCode == up)
-            ya = -1;
+            ya = -4;
         else if (keyCode == down)
-            ya = 1;
+            ya = 4;
     }
 
     public void released(int keyCode) {

@@ -37,5 +37,11 @@ public class UsersDAO extends DAO {
 		}
 		return res;
 	}
+        
+        public void Insert(String l,String p){
+            this.collection.insertOne(
+                    new Document ("name" ,l).append("password", p)
+            );
+        }
 
 }
