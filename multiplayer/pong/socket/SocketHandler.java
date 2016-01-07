@@ -5,10 +5,13 @@ import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SocketHandler {
 	private static Socket socket;
-	private static String host = "http://localhost:8000"; 
+	private static String host = "http://localhost:8080"; 
 	
 	public static void connectSocket() {
 		try {
@@ -25,6 +28,39 @@ public class SocketHandler {
 			public void call(Object... arg0) {
 				System.out.println("Connected to SocketIO");
 			}
-		});
+		}).on("connectedPlayers",new Emitter.Listener() {
+
+                    @Override
+                    public void call(Object... os) {
+                        JSONArray players = (JSONArray) os[0];
+                        try{
+                            for(int i=0; i<players.length(); i++){
+                                System.out.print(players.getJSONObject(i).get("username"));
+                            }
+                        }catch(JSONException e){
+
+                        }
+
+                    }
+                });
 	}
+        
+        public static void userConnected(String username){
+            JSONObject data = new JSONObject();
+            try{
+                data.put("username",username);
+                socket.emit("userConnected", data);
+            }catch(JSONException e){
+                
+            }
+            
+        }
+        
+        
+        
+        public static void getPlayers(){
+            socket.emit("getPlayes", null);
+            
+            
+        }
 }

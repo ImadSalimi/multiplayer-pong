@@ -6,12 +6,22 @@ server.listen(8080, function() {
 	console.log("Server listening at port 8080...");
 });
 
-var connectedPlayers = {};
+var connectedPlayers = [];
+var test = {a : '1' , b : '2'};
 
 io.on('connection', function(socket) {
 	console.log(socket.id + " connected");
+	socket.on('userConnected' ,function(data){
+		connectedPlayers[socket.id].username = data.username ;
+		console.log(connectedPlayers);
+	})
+	socket.on('getPlayers',function(){
+		socket.emit('connectedPlayers', connectedPlayers);
+
+	})
 	socket.on('disconnect', function() {
-		console.log("Player disconnected");
+		delete connectedPlayers[socket.id];
 	});
-	connectedPlayers[socket.id] = {};
+	connectedPlayers.push({username : "",id : socket.id});
 });
+

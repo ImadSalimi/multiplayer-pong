@@ -11,6 +11,7 @@ public class Main {
 		// Show the login frame
 		LoginFrame loginFrame = new LoginFrame();
 		loginFrame.setVisible(true);
+                SocketHandler.getPlayers();
 	}
 
 }

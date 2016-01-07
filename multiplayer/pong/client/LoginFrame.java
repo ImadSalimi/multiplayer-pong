@@ -13,6 +13,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Dimension;
+import multiplayer.pong.socket.SocketHandler;
 
 /**
  *
@@ -163,9 +164,11 @@ public class LoginFrame extends javax.swing.JFrame {
             pwdError.setText("mot de pass errone !");
         }
         else {
+            SocketHandler.userConnected(username);
             LobbyFrame l = new LobbyFrame();
             this.setVisible(false);
             l.setVisible(true);
+            
         }
         
         
