@@ -7,18 +7,19 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class SocketHandler {
-	private Socket socket;
+	private static Socket socket;
+	private static String host = "http://localhost:8000"; 
 	
-	public SocketHandler() {
+	public static void connectSocket() {
 		try {
-			socket = IO.socket("http://localhost:8080");
+			socket = IO.socket(host);
 			socket.connect();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void configSocketEvents() {
+	public static void configSocketEvents() {
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
