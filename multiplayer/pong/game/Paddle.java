@@ -10,7 +10,7 @@ public class Paddle {
     private int up, down;
     private int x;
     // ya is velocity in the y-axis
-    private int y, ya = 2;
+    private int y, ya = 18;
     private boolean goingUp = false, goingDown = false;
 
     
