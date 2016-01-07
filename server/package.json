@@ -1,0 +1,27 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Server-side for multiplayer pong game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ImadSalimi/multiplayer-pong"
+  },
+  "keywords": [
+    "multiplayer",
+    "pong"
+  ],
+  "author": "Imad Salimi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ImadSalimi/multiplayer-pong/issues"
+  },
+  "homepage": "https://github.com/ImadSalimi/multiplayer-pong",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.4.0"
+  }
+}
