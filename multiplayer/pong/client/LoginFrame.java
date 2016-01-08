@@ -6,13 +6,14 @@
 package multiplayer.pong.client;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Dimension;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
 import multiplayer.pong.dao.UsersDAO;
 import multiplayer.pong.models.User;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Dimension;
 import multiplayer.pong.socket.SocketHandler;
 
 /**
@@ -23,13 +24,15 @@ public class LoginFrame extends javax.swing.JFrame {
   
     UsersDAO daousers = new UsersDAO();
 
+
+
     /**
      * Creates new form LoginFrame
      */
     public LoginFrame() {
     	getContentPane().setSize(new Dimension(800, 600));
-        initComponents();
-        this.getContentPane().setBackground( Color.black );
+    	this.getContentPane().setBackground( Color.black );
+    	initComponents();
     }
 
     /**
@@ -151,30 +154,25 @@ public class LoginFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
-        // TODO add your handling code here:
         loginError.setText("");
         pwdError.setText("");
         
         String username = loginTxtFeild.getText();
-        User user = daousers.findByUsername(username);
-        if(user == null){
-            loginError.setText("login inexistant !");
+        User user = daoUsers.findByUsername(username);
+        if(user == null) {
+            loginError.setText("Login inexistant !");
         }
-        else if(!user.getPassword().equals(pwdTxtFeild.getText())){
-            pwdError.setText("mot de pass errone !");
+        else if(!user.getPassword().equals(pwdTxtFeild.getText())) {
+            pwdError.setText("Mot de passe érroné !");
         }
         else {
+        	LobbyFrame l = new LobbyFrame();
             SocketHandler.userConnected(username);
-            LobbyFrame l = new LobbyFrame();
             this.setVisible(false);
             l.setVisible(true);
             
         }
-        
-        
-        
-       
-        
+          
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

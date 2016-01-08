@@ -3,24 +3,29 @@ package multiplayer.pong.socket;
 import java.net.URISyntaxException;
 import java.util.Vector;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import multiplayer.pong.client.LobbyFrame;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class SocketHandler {
 	private static Socket socket;
-	private static String host = "http://localhost:8080"; 
-        public static String username ;
+	private static String host = "http://localhost:1337/";
+    public static String username;
+    
+    public static Socket getSocket() {
+    	return socket;
+    }
 	
 	public static void connectSocket() {
 		try {
 			socket = IO.socket(host);
 			socket.connect();
+			System.out.println(socket);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -32,29 +37,14 @@ public class SocketHandler {
 			public void call(Object... arg0) {
 				System.out.println("Connected to SocketIO");
 			}
-		}).on("connectedPlayers", new Emitter.Listener() {
-            @Override
-            public void call(Object... arg0) {
-                JSONArray players = (JSONArray) arg0[0];
-                Vector<String> usernames = new Vector<String>();
-                try {
-                    for(int i=0; i<players.length(); i++){
-                        usernames.add(players.getJSONObject(i).getString("username"));
-                    }
-                } catch(JSONException e) {
-
-                }
-                LobbyFrame.connectedPlayers = usernames;
-                LobbyFrame.refresh();
-            }
-        });
+		});
 	}
         
     public static void userConnected(String username){
-        SocketHandler.username = username ;
+        SocketHandler.username = username;
         JSONObject data = new JSONObject();
         try {
-            data.put("username",username);
+            data.put("username", username);
             socket.emit("userConnected", data);
         } catch(JSONException e) {
             

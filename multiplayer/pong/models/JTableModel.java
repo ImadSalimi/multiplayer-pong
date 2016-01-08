@@ -5,10 +5,10 @@
  */
 package multiplayer.pong.models;
 
-import java.util.ArrayList;
 import java.util.Vector;
-import java.util.logging.SocketHandler;
 import javax.swing.table.AbstractTableModel;
+
+import multiplayer.pong.socket.SocketHandler;
 
 /**
  *
@@ -22,11 +22,11 @@ public class JTableModel extends AbstractTableModel{
     private Vector<String> Meslignes = new Vector<String>();
 
     public JTableModel(Vector<String> table) {
-        Meslignes = table.remove(SocketHandler.username) ;
+    	table.remove(SocketHandler.username);
+        Meslignes = table;
         nbL = table.size();
         nbC = 1 ;
         Titre = "username";
-               
     }
     
     public int getRowCount() {
