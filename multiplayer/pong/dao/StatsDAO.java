@@ -5,11 +5,14 @@
  */
 package multiplayer.pong.dao;
 
+import com.mongodb.Block;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import java.net.UnknownHostException;
+import static java.util.Arrays.asList;
 import java.util.Vector;
+import multiplayer.pong.models.Stats;
 import multiplayer.pong.models.User;
-import multiplayer.pong.models.stats;
 import org.bson.Document;
 
 /**
@@ -22,41 +25,63 @@ public class StatsDAO extends DAO {
      *
      */
     public StatsDAO() {
-        super("stats");
+        super("statistiques");
     }
     
-//    public int partiesGagnes(User user){
-//        
-//    }
-//    public int partiesPerdus(User user){
-//        
-//    }
-//    public Vector<stats> historiqueParties(User user){
-//        
-//        
-//    }
-        public void ajouterStat(User usr1 ,User usr2 , int scr1 , int scr2)
+
+        public Vector<Stats> historique(String username)
+        {
+            Vector<Stats> historique=new Vector<Stats>();
+            
+            FindIterable<Document> iterable = this.collection.find(new Document("$or",asList(new Document("player1",username)
+                    ,new Document("player2",username))));
+            System.out.println("1");
+            iterable.forEach(new Block<Document>(){
+                @Override
+                public void apply(final Document document) {
+                        historique.add(new Stats(document.getString("player1"), document.getString("player2")
+                        , document.getInteger("score1"), document.getInteger("score2")));
+                     }
+            });
+            
+            return historique;
+        }
+        public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
     {
-        this.collection.insertOne(new Document ("player1",usr1.getName())
-                .append("player2", usr2.getName())
+        this.collection.insertOne(new Document ("player1",usr1)
+                .append("player2", usr2)
                 .append("score1", scr1)
                 .append("score2", scr2)
                 );
         
     }
+        public int nbrePartiesGagnees(String username)
+        {
+          return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",5) 
+                    , new Document("player2",username).append("score2",5 ))));
+        }
         
-        //juste pour tester
-        	public static void main(String[] args) {
-                    try
-                    {
-                    StatsDAO A = new StatsDAO();
-                    User usr = new User("a", "b");
-                    User B = new User("c", "d");
-                    A.ajouterStat(usr, B, 1, 10);
-                    }
-                    catch (MongoException e)
-                    {
-                         System.out.println("2"+e);
-                    }
-	}
+        public int nbrePartiesPerdues(String username)
+        {
+          return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",new Document("$lt",5)) 
+                    , new Document("player2",username).append("score2",new Document("$lt",5) ))));
+        }
+    	public static void main(String[] args) {
+            //TEST unitaire , poke ISTIA Angers :v
+            StatsDAO A = new StatsDAO();
+            A.ajouterStat("Iyad", "imad", 5, 2);
+            A.ajouterStat("naoufal", "imad", 4, 5);
+            A.ajouterStat("Iyad", "naoufal", 5, 2);
+            A.ajouterStat("imad", "Iyad", 2, 5);
+            System.out.println("a gagne"+A.nbrePartiesGagnees("naoufal"));
+            System.out.println("a perdu"+A.nbrePartiesGagnees("naoufal"));
+            Vector<Stats> vect = A.historique("naoufal") ;
+            System.out.println(vect.size());
+            for (Stats B : vect){
+                System.out.println(B);
+            }
+           
+            
+            
+	}    
 }
