@@ -15,6 +15,7 @@ import org.json.JSONObject;
 public class SocketHandler {
 	private static Socket socket;
 	private static String host = "http://localhost:8080"; 
+        public static String username ;
 	
 	public static void connectSocket() {
 		try {
@@ -50,6 +51,7 @@ public class SocketHandler {
 	}
         
     public static void userConnected(String username){
+        SocketHandler.username = username ;
         JSONObject data = new JSONObject();
         try {
             data.put("username",username);

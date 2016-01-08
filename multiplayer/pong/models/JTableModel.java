@@ -7,6 +7,7 @@ package multiplayer.pong.models;
 
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.SocketHandler;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -21,7 +22,7 @@ public class JTableModel extends AbstractTableModel{
     private Vector<String> Meslignes = new Vector<String>();
 
     public JTableModel(Vector<String> table) {
-        Meslignes = table ;
+        Meslignes = table.remove(SocketHandler.username) ;
         nbL = table.size();
         nbC = 1 ;
         Titre = "username";
