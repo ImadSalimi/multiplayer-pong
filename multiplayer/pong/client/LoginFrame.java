@@ -21,7 +21,10 @@ import multiplayer.pong.socket.SocketHandler;
  * @author Anonymus
  */
 public class LoginFrame extends javax.swing.JFrame {
-    UsersDAO daoUsers = new UsersDAO();
+  
+    UsersDAO daousers = new UsersDAO();
+
+
 
     /**
      * Creates new form LoginFrame
@@ -166,6 +169,7 @@ public class LoginFrame extends javax.swing.JFrame {
         	SocketHandler.userConnected(username);
             this.setVisible(false);
             l.setVisible(true);
+            
         }
           
     }//GEN-LAST:event_loginBtnActionPerformed
