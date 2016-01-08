@@ -35,7 +35,6 @@ public class StatsDAO extends DAO {
             
             FindIterable<Document> iterable = this.collection.find(new Document("$or",asList(new Document("player1",username)
                     ,new Document("player2",username))));
-            System.out.println("1");
             iterable.forEach(new Block<Document>(){
                 @Override
                 public void apply(final Document document) {
@@ -46,15 +45,17 @@ public class StatsDAO extends DAO {
             
             return historique;
         }
-        public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
-    {
-        this.collection.insertOne(new Document ("player1",usr1)
-                .append("player2", usr2)
-                .append("score1", scr1)
-                .append("score2", scr2)
-                );
         
-    }
+        public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
+	    {
+	        this.collection.insertOne(new Document ("player1",usr1)
+	                .append("player2", usr2)
+	                .append("score1", scr1)
+	                .append("score2", scr2)
+	        		);
+	        
+	    }
+        
         public int nbrePartiesGagnees(String username)
         {
           return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",5) 
@@ -66,6 +67,7 @@ public class StatsDAO extends DAO {
           return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",new Document("$lt",5)) 
                     , new Document("player2",username).append("score2",new Document("$lt",5) ))));
         }
+
     	public static void main(String[] args) {
             //TEST unitaire , poke ISTIA Angers :v
             StatsDAO A = new StatsDAO();

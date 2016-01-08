@@ -6,24 +6,52 @@
 package multiplayer.pong.client;
 
 import java.util.Vector;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import multiplayer.pong.models.JTableModel;
+import multiplayer.pong.socket.SocketHandler;
 
 /**
  *
  * @author Anonymus
  */
 public class LobbyFrame extends javax.swing.JFrame {
-	public static Vector<String> connectedPlayers;
+	private Socket socket;
+	private Vector<String> connectedPlayers = new Vector<String>();
     /**
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
         initComponents();
         usernamesT.setShowHorizontalLines(false);
-        refresh();
+        socket = SocketHandler.getSocket();
+        handleSockets();
     }
     
-    public static void refresh(){
+    private void handleSockets() {
+    	socket.on("connectedPlayers", new Emitter.Listener() {
+            @Override
+            public void call(Object... arg0) {
+                JSONArray players = (JSONArray) arg0[0];
+                Vector<String> usernames = new Vector<String>();
+                try {
+                    for(int i=0; i<players.length(); i++){
+                        usernames.add(players.getJSONObject(i).getString("username"));
+                    }
+                } catch(JSONException e) {
+
+                }
+                connectedPlayers = usernames;
+                refresh();
+            }
+        });
+    }
+    
+    private void refresh(){
         usernamesT.setModel(new JTableModel(connectedPlayers));
     }
     
