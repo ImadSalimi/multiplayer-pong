@@ -5,12 +5,14 @@
  */
 package multiplayer.pong.dao;
 
+import com.mongodb.Block;
 import com.mongodb.MongoException;
+import com.mongodb.client.FindIterable;
 import java.net.UnknownHostException;
 import static java.util.Arrays.asList;
 import java.util.Vector;
+import multiplayer.pong.models.Stats;
 import multiplayer.pong.models.User;
-import multiplayer.pong.models.stats;
 import org.bson.Document;
 
 /**
@@ -26,16 +28,8 @@ public class StatsDAO extends DAO {
         super("statistiques");
     }
     
-//    public int partiesGagnes(User user){
-//        
-//    }
-//    public int partiesPerdus(User user){
-//        
-//    }
-//    public Vector<stats> historiqueParties(User user){
-//        
-//        
-//    }
+
+
         public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
     {
         this.collection.insertOne(new Document ("player1",usr1)
@@ -57,14 +51,20 @@ public class StatsDAO extends DAO {
                     , new Document("player2",username).append("score2",new Document("$lt",5) ))));
         }
     	public static void main(String[] args) {
-
+            //TEST unitaire , poke ISTIA Angers :v
             StatsDAO A = new StatsDAO();
-            A.ajouterStat("naoufal", "imad", 5, 2);
+            A.ajouterStat("Iyad", "imad", 5, 2);
             A.ajouterStat("naoufal", "imad", 4, 5);
-            A.ajouterStat("imad", "naoufal", 5, 2);
-            A.ajouterStat("imad", "naoufal", 2, 5);
+            A.ajouterStat("Iyad", "naoufal", 5, 2);
+            A.ajouterStat("imad", "Iyad", 2, 5);
             System.out.println("a gagne"+A.nbrePartiesGagnees("naoufal"));
             System.out.println("a perdu"+A.nbrePartiesGagnees("naoufal"));
+            Vector<Stats> vect = A.historique("naoufal") ;
+            System.out.println(vect.size());
+            for (Stats B : vect){
+                System.out.println(B);
+            }
+           
             
             
 	}    
