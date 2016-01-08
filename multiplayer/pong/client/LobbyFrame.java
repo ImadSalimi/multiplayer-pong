@@ -30,6 +30,7 @@ public class LobbyFrame extends javax.swing.JFrame {
         usernamesT.setShowHorizontalLines(false);
         socket = SocketHandler.getSocket();
         handleSockets();
+        refresh();
     }
     
     private void handleSockets() {
@@ -37,15 +38,13 @@ public class LobbyFrame extends javax.swing.JFrame {
             @Override
             public void call(Object... arg0) {
                 JSONArray players = (JSONArray) arg0[0];
-                Vector<String> usernames = new Vector<String>();
                 try {
                     for(int i=0; i<players.length(); i++){
-                        usernames.add(players.getJSONObject(i).getString("username"));
+                        connectedPlayers.add(players.getJSONObject(i).getString("username"));
                     }
                 } catch(JSONException e) {
 
                 }
-                connectedPlayers = usernames;
                 refresh();
             }
         });
