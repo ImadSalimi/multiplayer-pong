@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import javax.swing.JOptionPane;
 
 public class Ball {
-	private static final int WIDTH = 30, HEIGHT = 30;
+	private static final int SIZE = 30;
     private Pong game;
     private int x, y, xa = 2, ya = 2;
     
@@ -24,11 +24,11 @@ public class Ball {
             game.getPanel().increaseScoreFor(1);
             xa = -xa;
         }
-        else if (x >= game.getWidth() - WIDTH) {
+        else if (x >= game.getWidth() - SIZE) {
             game.getPanel().increaseScoreFor(2);
             xa = -xa;
         }
-        else if (y < 0 || y >= game.getHeight() - HEIGHT)
+        else if (y < 0 || y >= game.getHeight() - SIZE)
             ya = -ya;
         checkCollision();
     }
@@ -39,10 +39,10 @@ public class Ball {
     }
     
     public Rectangle getBounds() {
-        return new Rectangle(x, y, WIDTH, HEIGHT);
+        return new Rectangle(x, y, SIZE, SIZE);
     }
     
     public void paint(Graphics2D g) {
-        g.fillRect(x, y, WIDTH, HEIGHT);
+        g.fillOval(x, y, SIZE, SIZE);
     }
 }

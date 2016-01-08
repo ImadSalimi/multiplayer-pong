@@ -10,7 +10,7 @@ public class Paddle {
     private int up, down;
     private int x;
     // ya is velocity in the y-axis
-    private int y, ya = 18;
+    private int y, ya = 2;
     private boolean goingUp = false, goingDown = false;
 
     
@@ -23,8 +23,8 @@ public class Paddle {
     }
 
     public void update() {
-        if (goingUp && y > 0) y--;
-        else if (goingDown && y + HEIGHT < game.getHeight()) y++;
+        if (goingUp && y > 0) y -= ya;
+        else if (goingDown && y + HEIGHT < game.getHeight()) y += ya;
     }
     
     public void pressed(int keyCode) {
