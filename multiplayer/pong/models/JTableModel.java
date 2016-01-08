@@ -21,12 +21,12 @@ public class JTableModel extends AbstractTableModel{
     private String Titre ;
     private Vector<String> Meslignes = new Vector<String>();
 
-    public JTableModel(Vector<String> table) {
+    public JTableModel(Vector<String> table ,String titre ) {
     	table.remove(SocketHandler.username);
         Meslignes = table;
         nbL = table.size();
         nbC = 1 ;
-        Titre = "username";
+        Titre = titre;
     }
     
     public int getRowCount() {

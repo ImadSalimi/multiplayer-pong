@@ -18,11 +18,11 @@ public class WinningComparator implements Comparator {
     {
         User s1 = (User)o1;
         User s2 = (User)o2;
-        if (stat.nbrePartiesGagnees(s1.getName())==stat.nbrePartiesGagnees(s1.getName()))
+        if (stat.nbrePartiesGagnees(s1.getName())==stat.nbrePartiesGagnees(s2.getName()))
             return 0 ;
-        else if (stat.nbrePartiesGagnees(s1.getName())>stat.nbrePartiesGagnees(s1.getName()))
+        else if (stat.nbrePartiesGagnees(s1.getName())>stat.nbrePartiesGagnees(s2.getName()))
             return 1 ;
-        else return 1;
+        else return -1;
     }
 
 

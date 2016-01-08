@@ -52,7 +52,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void refresh(){
-        usernamesT.setModel(new JTableModel(connectedPlayers));
+        usernamesT.setModel(new JTableModel(connectedPlayers,"username"));
     }
     
     public static  void append(String s){

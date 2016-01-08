@@ -31,12 +31,18 @@ public class StatsDAO extends DAO {
         super("statistiques");
     }
     
-        public Vector<User> classement()
+        public Vector<String> classement(Boolean test)//true pour croissant false pour decroissant
         {
-            Vector<User> result = user.findAll();
-            Collections.sort(result , new WinningComparator());
-            
-          return result;
+            Vector<User> list = user.findAll();
+            Vector<String> result = new Vector<String>();
+
+            Collections.sort(list , new WinningComparator());
+            if(test) Collections.reverse(list);
+          for (User u : list)
+          {
+              result.add(u.getName()+" : "+nbrePartiesGagnees(u.getName())+"W");
+          }
+          return result ;
             
             
         }
@@ -58,6 +64,7 @@ public class StatsDAO extends DAO {
             
             return historique;
         }
+
          public Vector<Stats> historiqueGlobal()
         {
             Vector<Stats> historique=new Vector<Stats>();
@@ -100,7 +107,7 @@ public class StatsDAO extends DAO {
     	public static void main(String[] args) {
             //TEST unitaire , poke ISTIA Angers :v
             StatsDAO A = new StatsDAO();
-            A.ajouterStat("Iyad", "imad", 5, 2);
+           /* A.ajouterStat("Iyad", "imad", 5, 2);
             A.ajouterStat("naoufal", "imad", 4, 5);
             A.ajouterStat("Iyad", "naoufal", 4, 5);
             A.ajouterStat("imad", "Iyad", 2, 5);
@@ -111,7 +118,8 @@ public class StatsDAO extends DAO {
             for (Stats B : vect){
                 System.out.println(B);
             }
-            
+            */
+            A.classement();
            
             
             
