@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class JTableModel extends AbstractTableModel{
     
-    private int nbL = 0 ;
+    private int nbL ;
     private int nbC ;
     private String Titre ;
     private Vector<String> Meslignes = new Vector<String>();

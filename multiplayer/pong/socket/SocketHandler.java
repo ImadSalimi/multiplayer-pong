@@ -44,6 +44,7 @@ public class SocketHandler {
 
                 }
                 LobbyFrame.connectedPlayers = usernames;
+                LobbyFrame.refresh();
             }
         });
 	}
