@@ -7,21 +7,19 @@ server.listen(8080, function() {
 });
 
 var connectedPlayers = [];
-var test = {a : '1' , b : '2'};
 
 io.on('connection', function(socket) {
-	console.log(socket.id + " connected");
-	socket.on('userConnected' ,function(data){
-		connectedPlayers[socket.id].username = data.username ;
-		console.log(connectedPlayers);
-	})
-	socket.on('getPlayers',function(){
-		socket.emit('connectedPlayers', connectedPlayers);
-
-	})
-	socket.on('disconnect', function() {
-		delete connectedPlayers[socket.id];
+	socket.on('userConnected', function(data){
+		connectedPlayers.push({id: socket.id, username: data.username});
+		console.log(data.username + " connected!");
+		io.emit('connectedPlayers', connectedPlayers);
 	});
-	connectedPlayers.push({username : "",id : socket.id});
+	socket.on('disconnect', function() {
+		for(var i = 0; i < connectedPlayers.length; i++) {
+			if (connectedPlayers[i].id == socket.id) {
+				connectedPlayers.splice(i, 1);
+			}
+		}
+	});
 });
 
