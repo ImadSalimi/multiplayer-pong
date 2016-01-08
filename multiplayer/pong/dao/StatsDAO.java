@@ -14,13 +14,16 @@ import java.util.Vector;
 import multiplayer.pong.models.Stats;
 import multiplayer.pong.models.User;
 import org.bson.Document;
+import java.io.*;
+import java.util.Collections;
+import multiplayer.pong.models.WinningComparator;
 
 /**
  *
  * @author pc
  */
 public class StatsDAO extends DAO {
-
+    UsersDAO user = new UsersDAO();
     /**
      *
      */
@@ -28,14 +31,37 @@ public class StatsDAO extends DAO {
         super("statistiques");
     }
     
-
+        public Vector<User> classement()
+        {
+            Vector<User> result = user.findAll();
+            Collections.sort(result , new WinningComparator());
+            
+          return result;
+            
+            
+        }
+        
         public Vector<Stats> historique(String username)
         {
             Vector<Stats> historique=new Vector<Stats>();
             
             FindIterable<Document> iterable = this.collection.find(new Document("$or",asList(new Document("player1",username)
                     ,new Document("player2",username))));
-            System.out.println("1");
+            iterable.forEach(new Block<Document>(){
+                @Override
+                public void apply(final Document document) {
+                        historique.add(new Stats(document.getString("player1"), document.getString("player2")
+                        , document.getInteger("score1"), document.getInteger("score2")));
+                     }
+            });
+            
+            return historique;
+        }
+         public Vector<Stats> historiqueGlobal()
+        {
+            Vector<Stats> historique=new Vector<Stats>();
+            
+            FindIterable<Document> iterable = this.collection.find();
             iterable.forEach(new Block<Document>(){
                 @Override
                 public void apply(final Document document) {
@@ -71,17 +97,20 @@ public class StatsDAO extends DAO {
             StatsDAO A = new StatsDAO();
             A.ajouterStat("Iyad", "imad", 5, 2);
             A.ajouterStat("naoufal", "imad", 4, 5);
-            A.ajouterStat("Iyad", "naoufal", 5, 2);
+            A.ajouterStat("Iyad", "naoufal", 4, 5);
             A.ajouterStat("imad", "Iyad", 2, 5);
-            System.out.println("a gagne"+A.nbrePartiesGagnees("naoufal"));
-            System.out.println("a perdu"+A.nbrePartiesGagnees("naoufal"));
-            Vector<Stats> vect = A.historique("naoufal") ;
+            System.out.println("a gagne "+A.nbrePartiesGagnees("naoufal"));
+            System.out.println("a perdu "+A.nbrePartiesPerdues("naoufal"));
+            Vector<Stats> vect = A.historiqueGlobal() ;
             System.out.println(vect.size());
             for (Stats B : vect){
                 System.out.println(B);
             }
+            
            
             
             
 	}    
+
+
 }
