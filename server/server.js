@@ -7,12 +7,11 @@ server.listen(8080, function() {
 });
 
 var connectedPlayers = [];
-var test = {a : '1' , b : '2'};
 
 io.on('connection', function(socket) {
 	console.log(socket.id + " connected");
 	socket.on('userConnected' ,function(data){
-		connectedPlayers[socket.id].username = data.username ;
+		
 		console.log(connectedPlayers);
 	})
 	socket.on('getPlayers',function(){
@@ -20,7 +19,7 @@ io.on('connection', function(socket) {
 
 	})
 	socket.on('disconnect', function() {
-		delete connectedPlayers[socket.id];
+		
 	});
 	connectedPlayers.push({username : "",id : socket.id});
 });
