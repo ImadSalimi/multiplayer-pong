@@ -29,7 +29,23 @@ public class StatsDAO extends DAO {
     }
     
 
-
+        public Vector<Stats> historique(String username)
+        {
+            Vector<Stats> historique=new Vector<Stats>();
+            
+            FindIterable<Document> iterable = this.collection.find(new Document("$or",asList(new Document("player1",username)
+                    ,new Document("player2",username))));
+            System.out.println("1");
+            iterable.forEach(new Block<Document>(){
+                @Override
+                public void apply(final Document document) {
+                        historique.add(new Stats(document.getString("player1"), document.getString("player2")
+                        , document.getInteger("score1"), document.getInteger("score2")));
+                     }
+            });
+            
+            return historique;
+        }
         public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
     {
         this.collection.insertOne(new Document ("player1",usr1)
