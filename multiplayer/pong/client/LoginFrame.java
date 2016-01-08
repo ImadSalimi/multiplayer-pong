@@ -164,10 +164,9 @@ public class LoginFrame extends javax.swing.JFrame {
         }
         else if(!user.getPassword().equals(pwdTxtFeild.getText())) {
             pwdError.setText("Mot de passe érroné !");
-        }
-        else {
+        } else {
         	LobbyFrame l = new LobbyFrame();
-            SocketHandler.userConnected(username);
+        	SocketHandler.userConnected(username);
             this.setVisible(false);
             l.setVisible(true);
             
