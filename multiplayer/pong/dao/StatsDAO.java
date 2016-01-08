@@ -7,6 +7,7 @@ package multiplayer.pong.dao;
 
 import com.mongodb.MongoException;
 import java.net.UnknownHostException;
+import static java.util.Arrays.asList;
 import java.util.Vector;
 import multiplayer.pong.models.User;
 import multiplayer.pong.models.stats;
@@ -22,7 +23,7 @@ public class StatsDAO extends DAO {
      *
      */
     public StatsDAO() {
-        super("stats");
+        super("statistiques");
     }
     
 //    public int partiesGagnes(User user){
@@ -35,28 +36,28 @@ public class StatsDAO extends DAO {
 //        
 //        
 //    }
-        public void ajouterStat(User usr1 ,User usr2 , int scr1 , int scr2)
+        public void ajouterStat(String usr1 ,String usr2 , int scr1 , int scr2)
     {
-        this.collection.insertOne(new Document ("player1",usr1.getName())
-                .append("player2", usr2.getName())
+        this.collection.insertOne(new Document ("player1",usr1)
+                .append("player2", usr2)
                 .append("score1", scr1)
                 .append("score2", scr2)
                 );
         
     }
-        
-        //juste pour tester
-        	public static void main(String[] args) {
-                    try
-                    {
-                    StatsDAO A = new StatsDAO();
-                    User usr = new User("a", "b");
-                    User B = new User("c", "d");
-                    A.ajouterStat(usr, B, 1, 10);
-                    }
-                    catch (MongoException e)
-                    {
-                         System.out.println("2"+e);
-                    }
-	}
+        public int nbrePartiesGagnees(String username)
+        {
+          return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",5) 
+                    , new Document("player2",username).append("score2",5 ))));
+        }
+    	public static void main(String[] args) {
+
+            StatsDAO A = new StatsDAO();
+            A.ajouterStat("naoufal", "imad", 5, 2);
+            A.ajouterStat("naoufal", "imad", 4, 5);
+            A.ajouterStat("imad", "naoufal", 5, 2);
+            A.ajouterStat("imad", "naoufal", 2, 5);
+            System.out.println(A.nbrePartiesGagnees("naoufal"));
+            
+	}    
 }
