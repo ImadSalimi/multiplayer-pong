@@ -49,7 +49,7 @@ public class StatsDAO extends DAO {
         
         public Vector<Stats> historique(String username)
         {
-            Vector<Stats> historique=new Vector<Stats>();
+            final Vector<Stats> historique = new Vector<Stats>();
             
             FindIterable<Document> iterable = this.collection.find(new Document("$or",asList(new Document("player1",username)
                     ,new Document("player2",username))));
@@ -67,7 +67,7 @@ public class StatsDAO extends DAO {
 
          public Vector<Stats> historiqueGlobal()
         {
-            Vector<Stats> historique=new Vector<Stats>();
+            final Vector<Stats> historique=new Vector<Stats>();
             
             FindIterable<Document> iterable = this.collection.find();
 
@@ -117,9 +117,8 @@ public class StatsDAO extends DAO {
             System.out.println(vect.size());
             for (Stats B : vect){
                 System.out.println(B);
-            }
-            */
-            A.classement();
+            }*/
+           
            
             
             

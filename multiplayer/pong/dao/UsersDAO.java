@@ -16,7 +16,7 @@ public class UsersDAO extends DAO {
 	}
 	
 	public Vector<User> findAll() {
-		Vector<User> users = new Vector<User>();
+		final Vector<User> users = new Vector<User>();
 		FindIterable<Document> it = this.collection.find();
 		it.forEach(new Block<Document>() {
 			public void apply(final Document document) {
