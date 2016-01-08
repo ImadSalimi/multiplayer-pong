@@ -2,7 +2,7 @@ package multiplayer.pong.dao;
 
 import org.bson.Document;
 
-import com.mongodb.MongoClient;
+import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
