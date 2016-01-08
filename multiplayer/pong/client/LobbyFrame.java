@@ -5,17 +5,20 @@
  */
 package multiplayer.pong.client;
 
+import java.util.Vector;
+
 /**
  *
  * @author Anonymus
  */
 public class LobbyFrame extends javax.swing.JFrame {
-
+	public static Vector<String> connectedPlayers;
     /**
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
         initComponents();
+        System.out.println(connectedPlayers);
     }
 
     /**

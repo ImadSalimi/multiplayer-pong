@@ -168,7 +168,6 @@ public class LoginFrame extends javax.swing.JFrame {
             LobbyFrame l = new LobbyFrame();
             this.setVisible(false);
             l.setVisible(true);
-            
         }
         
         
