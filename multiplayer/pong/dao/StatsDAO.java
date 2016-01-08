@@ -50,6 +50,12 @@ public class StatsDAO extends DAO {
           return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",5) 
                     , new Document("player2",username).append("score2",5 ))));
         }
+        
+        public int nbrePartiesPerdues(String username)
+        {
+          return  (int) this.collection.count(new Document("$or",asList(new Document("player1",username).append("score1",new Document("$lt",5)) 
+                    , new Document("player2",username).append("score2",new Document("$lt",5) ))));
+        }
     	public static void main(String[] args) {
 
             StatsDAO A = new StatsDAO();
@@ -57,7 +63,9 @@ public class StatsDAO extends DAO {
             A.ajouterStat("naoufal", "imad", 4, 5);
             A.ajouterStat("imad", "naoufal", 5, 2);
             A.ajouterStat("imad", "naoufal", 2, 5);
-            System.out.println(A.nbrePartiesGagnees("naoufal"));
+            System.out.println("a gagne"+A.nbrePartiesGagnees("naoufal"));
+            System.out.println("a perdu"+A.nbrePartiesGagnees("naoufal"));
+            
             
 	}    
 }
