@@ -1,7 +1,6 @@
 package multiplayer.pong.socket;
 
 import java.net.URISyntaxException;
-import java.util.Vector;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,7 +9,6 @@ import org.json.JSONObject;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import multiplayer.pong.client.LobbyFrame;
 
 public class SocketHandler {
 	private static Socket socket;
@@ -25,7 +23,6 @@ public class SocketHandler {
 		try {
 			socket = IO.socket(host);
 			socket.connect();
-			System.out.println(socket);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +32,8 @@ public class SocketHandler {
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				System.out.println("Connected to SocketIO");
+				System.out.println("Connected to SocketIO server");
+				System.out.println(socket.id());
 			}
 		});
 	}
