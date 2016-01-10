@@ -14,6 +14,16 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import multiplayer.pong.models.JTableModel;
 import multiplayer.pong.socket.SocketHandler;
+import javax.swing.JLabel;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Font;
+import java.awt.Color;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  *
@@ -26,6 +36,7 @@ public class LobbyFrame extends javax.swing.JFrame {
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
+    	getContentPane().setBackground(new Color(0, 0, 0));
         initComponents();
         usernamesT.setShowHorizontalLines(false);
         socket = SocketHandler.getSocket();
@@ -51,10 +62,10 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void refresh(){
-        usernamesT.setModel(new JTableModel(connectedPlayers,"username"));
+        usernamesT.setModel(new JTableModel(connectedPlayers, usernamesT.getColumnName(0)));
     }
     
-    public static  void append(String s){
+    public void append(String s){
         ta.append(s);
     }
 
@@ -69,8 +80,6 @@ public class LobbyFrame extends javax.swing.JFrame {
 
         jScrollPane2 = new javax.swing.JScrollPane();
         usernamesT = new javax.swing.JTable();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        ta = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 0, 0));
@@ -83,7 +92,7 @@ public class LobbyFrame extends javax.swing.JFrame {
                 {null}
             },
             new String [] {
-                "username"
+                "Username"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -100,31 +109,56 @@ public class LobbyFrame extends javax.swing.JFrame {
         if (usernamesT.getColumnModel().getColumnCount() > 0) {
             usernamesT.getColumnModel().getColumn(0).setResizable(false);
         }
-
-        ta.setColumns(20);
-        ta.setRows(5);
-        jScrollPane1.setViewportView(ta);
+        
+        JLabel lblUtilisateursEnligne = new JLabel("Utilisateurs en-ligne");
+        lblUtilisateursEnligne.setForeground(new Color(255, 255, 255));
+        lblUtilisateursEnligne.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
+        
+        ta = new JTextArea();
+        ta.setEditable(false);
+        
+        cmdPrompt = new JTextArea();
+        
+        commandBtn = new JButton("Envoyer");
+        commandBtn.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        	}
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+        	layout.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(Alignment.LEADING, layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
+        			.addGap(18)
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(commandBtn, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+        				.addComponent(lblUtilisateursEnligne, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+        				.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+        			.addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(123, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
-                .addGap(127, 127, 127))
+        	layout.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addContainerGap(88, Short.MAX_VALUE)
+        			.addComponent(lblUtilisateursEnligne, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
+        				.addComponent(ta)
+        				.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(18)
+        					.addComponent(cmdPrompt, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(27)
+        					.addComponent(commandBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)))
+        			.addGap(36))
         );
+        getContentPane().setLayout(layout);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -163,11 +197,9 @@ public class LobbyFrame extends javax.swing.JFrame {
             }
         });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private static javax.swing.JTextArea ta;
     private static javax.swing.JTable usernamesT;
-    // End of variables declaration//GEN-END:variables
+    private JTextArea ta;
+    private JTextArea cmdPrompt;
+    private JButton commandBtn;
 }

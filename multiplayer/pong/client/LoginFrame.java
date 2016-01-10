@@ -64,7 +64,7 @@ public class LoginFrame extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Verdana", 0, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("password");
+        jLabel2.setText("Password");
 
         loginBtn.setBackground(new java.awt.Color(0, 51, 51));
         loginBtn.setForeground(new java.awt.Color(255, 255, 255));
@@ -108,8 +108,8 @@ public class LoginFrame extends javax.swing.JFrame {
         					.addGap(188)
         					.addGroup(layout.createParallelGroup(Alignment.LEADING)
         						.addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 155, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
-        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        						.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE))
+        					.addGap(18)
         					.addGroup(layout.createParallelGroup(Alignment.LEADING)
         						.addGroup(layout.createParallelGroup(Alignment.LEADING, false)
         							.addComponent(pwdError, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -121,13 +121,13 @@ public class LoginFrame extends javax.swing.JFrame {
         							.addComponent(loginError, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE)))))
         			.addContainerGap(262, Short.MAX_VALUE))
         		.addGroup(layout.createSequentialGroup()
-        			.addContainerGap(220, Short.MAX_VALUE)
+        			.addContainerGap(270, Short.MAX_VALUE)
         			.addComponent(jLabel3)
         			.addGap(175))
         );
         layout.setVerticalGroup(
-        	layout.createParallelGroup(Alignment.LEADING)
-        		.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+        	layout.createParallelGroup(Alignment.TRAILING)
+        		.addGroup(layout.createSequentialGroup()
         			.addGap(46)
         			.addComponent(jLabel3)
         			.addPreferredGap(ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
