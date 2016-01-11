@@ -182,7 +182,7 @@ public class InscriptionFrame extends javax.swing.JFrame {
         }
         else
         {
-            daousers.Insert(username, pwdTxtFeild.getText());
+            daousers.insert(username, pwdTxtFeild.getText());
             LoginFrame l = new LoginFrame();
             this.setVisible(false);
             l.setVisible(true);

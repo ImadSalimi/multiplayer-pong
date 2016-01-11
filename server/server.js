@@ -11,13 +11,15 @@ var connectedPlayers = [];
 io.on('connection', function(socket) {
 	socket.on('userConnected', function(data){
 		connectedPlayers.push({id: socket.id, username: data.username});
-		console.log(data.username + " connected!");
+		socket.emit('userConnected', data.username);
 		io.emit('connectedPlayers', connectedPlayers);
+		console.log(socket.id + " connected!");
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {
 			if (connectedPlayers[i].id == socket.id) {
 				console.log(connectedPlayers[i].username + " disconnected!");
+				socket.broadcast.emit('userDisconnected', connectedPlayers[i].username);
 				connectedPlayers.splice(i, 1);
 			}
 		}

@@ -32,14 +32,12 @@ public class SocketHandler {
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				System.out.println("Connected to SocketIO server");
-				System.out.println(socket.id());
+				System.out.println("Connected to SocketIO server. ID: " + socket.id());
 			}
 		});
 	}
         
     public static void userConnected(String username){
-        SocketHandler.username = username;
         JSONObject data = new JSONObject();
         try {
             data.put("username", username);

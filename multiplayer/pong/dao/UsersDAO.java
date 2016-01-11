@@ -1,5 +1,7 @@
 package multiplayer.pong.dao;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import org.bson.Document;
@@ -19,6 +21,7 @@ public class UsersDAO extends DAO {
 		final Vector<User> users = new Vector<User>();
 		FindIterable<Document> it = this.collection.find();
 		it.forEach(new Block<Document>() {
+			@Override
 			public void apply(final Document document) {
 				users.add(new User(document.getString("name"), document.getString("password")));
 			}
@@ -37,11 +40,28 @@ public class UsersDAO extends DAO {
 		}
 		return res;
 	}
+	
+	public Vector<String> getFriends(String username) {
+		Vector<String> result = new Vector<String>();
+		FindIterable<Document> it = this.collection.find(new Document("name", username));
+		it.forEach(new Block<Document>() {
+			@Override
+			public void apply(final Document document) {
+				ArrayList<String> friends = (ArrayList<String>) document.get("friends");
+				for (String friend : friends) {
+					result.add(friend);
+				}
+			}
+		});
+		return result;
+	}
         
-        public void Insert(String l,String p){
-            this.collection.insertOne(
-                    new Document ("name" ,l).append("password", p)
-            );
-        }
+	public void insert(String username, String password){
+	    this.collection.insertOne(
+	            new Document("name", username)
+	            .append("password", password)
+	            .append("friends", Arrays.asList())
+	    );
+	}
 
 }

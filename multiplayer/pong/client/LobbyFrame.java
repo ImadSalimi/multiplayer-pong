@@ -5,25 +5,31 @@
  */
 package multiplayer.pong.client;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
+
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import multiplayer.pong.dao.UsersDAO;
 import multiplayer.pong.models.JTableModel;
 import multiplayer.pong.socket.SocketHandler;
-import javax.swing.JLabel;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Font;
-import java.awt.Color;
-import javax.swing.JTextArea;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 /**
  *
@@ -31,11 +37,14 @@ import java.awt.event.ActionEvent;
  */
 public class LobbyFrame extends javax.swing.JFrame {
 	private Socket socket;
+	private UsersDAO daoUsers = new UsersDAO();
 	private Vector<String> connectedPlayers = new Vector<String>();
+	private Vector<String> connectedFriends = new Vector<String>();
     /**
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
+    	getContentPane().setSize(new Dimension(800, 600));
     	getContentPane().setBackground(new Color(0, 0, 0));
         initComponents();
         usernamesT.setShowHorizontalLines(false);
@@ -45,24 +54,50 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void handleSockets() {
-    	socket.on("connectedPlayers", new Emitter.Listener() {
+    	socket.on("userConnected", new Emitter.Listener() {
+			@Override
+			public void call(Object... arg0) {
+				getConnectedFriends();
+				refresh();
+			}
+		}).on("connectedPlayers", new Emitter.Listener() {
             @Override
             public void call(Object... arg0) {
                 JSONArray players = (JSONArray) arg0[0];
+                Vector<String> online = new Vector<String>();
                 try {
                     for(int i=0; i<players.length(); i++){
-                        connectedPlayers.add(players.getJSONObject(i).getString("username"));
+                        online.add(players.getJSONObject(i).getString("username"));
                     }
-                } catch(JSONException e) {
-
-                }
+                } catch(JSONException e) {}
+                connectedPlayers = online;
+                getConnectedFriends();
                 refresh();
             }
-        });
+        }).on("userDisconnected", new Emitter.Listener() {
+			@Override
+			public void call(Object... arg0) {
+				String username = (String) arg0[0];
+				connectedPlayers.remove(username);
+				refresh();
+			}
+		});
+    }
+    
+    private void getConnectedFriends() {
+    	 // get connected friends
+        Vector<String> friends = daoUsers.getFriends(SocketHandler.username);
+        Vector<String> res = new Vector<String>();
+        for (String friend : friends) {
+        	if (connectedPlayers.contains(friend))
+        		res.add(friend);
+        }
+        connectedFriends = res;
     }
     
     private void refresh(){
         usernamesT.setModel(new JTableModel(connectedPlayers, usernamesT.getColumnName(0)));
+        friendsT.setModel(new JTableModel(connectedFriends, friendsT.getColumnName(0)));
     }
     
     public void append(String s){
@@ -124,40 +159,84 @@ public class LobbyFrame extends javax.swing.JFrame {
         	public void actionPerformed(ActionEvent e) {
         	}
         });
+        
+        JLabel lblLobbyPrincipal = new JLabel("Lobby Principal");
+        lblLobbyPrincipal.setFont(new Font("Georgia", Font.PLAIN, 70));
+        lblLobbyPrincipal.setForeground(new Color(255, 255, 255));
+        lblLobbyPrincipal.setBackground(new Color(0, 0, 0));
+        
+        JLabel lblBienvenueUsername = new JLabel("Bienvenue, " + SocketHandler.username);
+        lblBienvenueUsername.setFont(new Font("Georgia", Font.PLAIN, 18));
+        lblBienvenueUsername.setForeground(Color.WHITE);
+        
+        scrollPane = new JScrollPane();
+        
+        lblAmisConnects = new JLabel("Amis connect\u00E9s");
+        lblAmisConnects.setForeground(Color.WHITE);
+        lblAmisConnects.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
-        	layout.createParallelGroup(Alignment.TRAILING)
-        		.addGroup(Alignment.LEADING, layout.createSequentialGroup()
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE))
-        			.addGap(18)
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(lblLobbyPrincipal, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+        					.addPreferredGap(ComponentPlacement.RELATED))
+        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+        					.addPreferredGap(ComponentPlacement.RELATED)))
         			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-        				.addComponent(commandBtn, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-        				.addComponent(lblUtilisateursEnligne, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-        				.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+        				.addGroup(layout.createSequentialGroup()
+        					.addGap(18)
+        					.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+        						.addComponent(commandBtn, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+        						.addComponent(lblUtilisateursEnligne, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+        						.addComponent(lblAmisConnects, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)))
+        				.addGroup(layout.createSequentialGroup()
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(lblBienvenueUsername)))
         			.addContainerGap())
         );
         layout.setVerticalGroup(
-        	layout.createParallelGroup(Alignment.TRAILING)
+        	layout.createParallelGroup(Alignment.LEADING)
         		.addGroup(layout.createSequentialGroup()
-        			.addContainerGap(88, Short.MAX_VALUE)
-        			.addComponent(lblUtilisateursEnligne, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-        			.addPreferredGap(ComponentPlacement.UNRELATED)
-        			.addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-        				.addComponent(ta)
-        				.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE))
-        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        			.addContainerGap()
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        				.addComponent(lblLobbyPrincipal, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
         				.addGroup(layout.createSequentialGroup()
-        					.addGap(18)
-        					.addComponent(cmdPrompt, GroupLayout.PREFERRED_SIZE, 89, GroupLayout.PREFERRED_SIZE))
+        					.addComponent(lblBienvenueUsername)
+        					.addPreferredGap(ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+        					.addComponent(lblUtilisateursEnligne, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
+        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
         				.addGroup(layout.createSequentialGroup()
-        					.addGap(27)
-        					.addComponent(commandBtn, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)))
-        			.addGap(36))
+        					.addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+        					.addComponent(lblAmisConnects, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+        					.addGap(4)
+        					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 163, GroupLayout.PREFERRED_SIZE)))
+        			.addGap(18)
+        			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
+        				.addComponent(commandBtn, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
+        			.addGap(19))
         );
+        
+        friendsT = new JTable();
+        friendsT.setModel(new DefaultTableModel(
+        	new Object[][] {
+        	},
+        	new String[] {
+        		"Username"
+        	}
+        ));
+        scrollPane.setViewportView(friendsT);
         getContentPane().setLayout(layout);
 
         pack();
@@ -202,4 +281,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     private JTextArea ta;
     private JTextArea cmdPrompt;
     private JButton commandBtn;
+    private JScrollPane scrollPane;
+    private JTable friendsT;
+    private JLabel lblAmisConnects;
 }
