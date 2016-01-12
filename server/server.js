@@ -9,11 +9,14 @@ server.listen(1337, function() {
 var connectedPlayers = [];
 
 io.on('connection', function(socket) {
-	socket.on('userConnected', function(data){
-		connectedPlayers.push({id: socket.id, username: data.username});
-		socket.emit('userConnected', data.username);
+	socket.on('userConnected', function(username){
+		connectedPlayers.push({id: socket.id, username: username});
 		io.emit('connectedPlayers', connectedPlayers);
-		console.log(socket.id + " connected!");
+		// Wait 500 ms before sending the userConnected event
+		setTimeout(function() {
+			socket.broadcast.emit('userConnected', username);
+		}, 500);
+		console.log(username + " connected!");
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {
@@ -23,6 +26,9 @@ io.on('connection', function(socket) {
 				connectedPlayers.splice(i, 1);
 			}
 		}
+	});
+	socket.on('lobbySync', function() {
+		socket.emit('lobbySync');
 	});
 });
 

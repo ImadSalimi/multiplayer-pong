@@ -8,9 +8,12 @@ package multiplayer.pong.client;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,9 +21,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,10 +53,19 @@ public class LobbyFrame extends javax.swing.JFrame {
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
+    	getContentPane().setPreferredSize(new Dimension(800, 600));
+    	setResizable(false);
+    	setMaximumSize(new Dimension(800, 600));
+    	getContentPane().setMaximumSize(new Dimension(800, 600));
+    	// Initialisations
     	getContentPane().setSize(new Dimension(800, 600));
     	getContentPane().setBackground(new Color(0, 0, 0));
         initComponents();
         usernamesT.setShowHorizontalLines(false);
+        friendsT.setShowHorizontalLines(false);
+        ta.setMargin(new Insets(10, 10, 10, 10));
+        // Listen to events
+        welcomeMessage();
         socket = SocketHandler.getSocket();
         handleSockets();
         refresh();
@@ -57,7 +75,10 @@ public class LobbyFrame extends javax.swing.JFrame {
     	socket.on("userConnected", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
+				String username = (String) arg0[0];
 				getConnectedFriends();
+				if (connectedFriends.contains(username))
+					appendMessage("Votre ami " + username + " vient de se connecter!\n", null);
 				refresh();
 			}
 		}).on("connectedPlayers", new Emitter.Listener() {
@@ -78,7 +99,10 @@ public class LobbyFrame extends javax.swing.JFrame {
 			@Override
 			public void call(Object... arg0) {
 				String username = (String) arg0[0];
+				if (connectedFriends.contains(username))
+					appendMessage("Votre ami " + username + " vient de se déconnecter!\n", null);
 				connectedPlayers.remove(username);
+				getConnectedFriends();
 				refresh();
 			}
 		});
@@ -100,8 +124,50 @@ public class LobbyFrame extends javax.swing.JFrame {
         friendsT.setModel(new JTableModel(connectedFriends, friendsT.getColumnName(0)));
     }
     
-    public void append(String s){
-        ta.append(s);
+    private void appendMessage(String message, SimpleAttributeSet set) {
+    	// If no set of styles was passed, use the default
+    	if (set == null)
+    		set = new SimpleAttributeSet();
+    	Document doc = ta.getStyledDocument();
+    	try {
+			doc.insertString(doc.getLength(), message, set);
+		} catch (BadLocationException e) {}
+    }
+    
+    private void welcomeMessage() {
+    	SimpleAttributeSet set = new SimpleAttributeSet();
+    	StyleConstants.setBold(set, true);
+    	StyleConstants.setForeground(set, new Color(81, 20, 237));
+    	appendMessage("Bienvenue à bord!\n"
+    			+ "  >> Pour afficher l'aide, tapez '/help' dans la zone de texte en bas.\n", set);
+    }
+    
+    private void displayHelp() {
+    	SimpleAttributeSet set = new SimpleAttributeSet();
+    	StyleConstants.setBold(set, true);
+    	StyleConstants.setForeground(set, new Color(48, 140, 38));
+    	appendMessage("Instructions:\n"
+    			+ "/help : Afficher ce menu\n", set);
+    }
+    
+    private void commandBtnActionPerformed(ActionEvent e) {
+    	String input = cmdPrompt.getText();
+    	handleCommand(input);
+    	cmdPrompt.setText("");
+    }
+    
+    private void handleCommand(String input) {
+    	String regex = "^\\s*\\/(\\w+) ?(\\w+)? ?(\\w+)?\\s*";
+    	Pattern pattern = Pattern.compile(regex);
+    	Matcher matcher = pattern.matcher(input);
+    	if (matcher.matches()) {
+    		String command = matcher.group(1);
+    		switch (command) {
+    		case "help":
+    			displayHelp();
+    			break;
+    		}
+    	}
     }
 
     /**
@@ -149,14 +215,10 @@ public class LobbyFrame extends javax.swing.JFrame {
         lblUtilisateursEnligne.setForeground(new Color(255, 255, 255));
         lblUtilisateursEnligne.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
         
-        ta = new JTextArea();
-        ta.setEditable(false);
-        
-        cmdPrompt = new JTextArea();
-        
         commandBtn = new JButton("Envoyer");
         commandBtn.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		commandBtnActionPerformed(e);
         	}
         });
         
@@ -165,15 +227,21 @@ public class LobbyFrame extends javax.swing.JFrame {
         lblLobbyPrincipal.setForeground(new Color(255, 255, 255));
         lblLobbyPrincipal.setBackground(new Color(0, 0, 0));
         
-        JLabel lblBienvenueUsername = new JLabel("Bienvenue, " + SocketHandler.username);
-        lblBienvenueUsername.setFont(new Font("Georgia", Font.PLAIN, 18));
-        lblBienvenueUsername.setForeground(Color.WHITE);
-        
         scrollPane = new JScrollPane();
         
         lblAmisConnects = new JLabel("Amis connect\u00E9s");
         lblAmisConnects.setForeground(Color.WHITE);
         lblAmisConnects.setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
+        
+        cmdPrompt = new JTextField();
+        cmdPrompt.setColumns(10);
+        
+        scrollPane_1 = new JScrollPane();
+        
+        lblWelcome = new JLabel("Bienvenue, " + SocketHandler.username);
+        lblWelcome.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblWelcome.setFont(new Font("Georgia", Font.PLAIN, 18));
+        lblWelcome.setForeground(Color.WHITE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         layout.setHorizontalGroup(
@@ -182,51 +250,55 @@ public class LobbyFrame extends javax.swing.JFrame {
         			.addContainerGap()
         			.addGroup(layout.createParallelGroup(Alignment.LEADING)
         				.addGroup(layout.createSequentialGroup()
-        					.addComponent(lblLobbyPrincipal, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-        					.addPreferredGap(ComponentPlacement.RELATED))
-        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-        				.addGroup(layout.createSequentialGroup()
-        					.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
-        					.addPreferredGap(ComponentPlacement.RELATED)))
-        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-        				.addGroup(layout.createSequentialGroup()
-        					.addGap(18)
         					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-        						.addComponent(commandBtn, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
-        						.addComponent(lblUtilisateursEnligne, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-        						.addComponent(lblAmisConnects, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)))
+        						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 605, GroupLayout.PREFERRED_SIZE)
+        						.addComponent(cmdPrompt, 605, 605, 605))
+        					.addPreferredGap(ComponentPlacement.RELATED))
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(lblLobbyPrincipal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        					.addGap(120)))
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(lblUtilisateursEnligne, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+        				.addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
+        					.addComponent(scrollPane, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+        					.addComponent(lblAmisConnects, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
+        				.addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
+        					.addComponent(commandBtn, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        					.addComponent(jScrollPane2, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
         				.addGroup(layout.createSequentialGroup()
         					.addPreferredGap(ComponentPlacement.RELATED)
-        					.addComponent(lblBienvenueUsername)))
+        					.addComponent(lblWelcome, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)))
         			.addContainerGap())
         );
         layout.setVerticalGroup(
         	layout.createParallelGroup(Alignment.LEADING)
         		.addGroup(layout.createSequentialGroup()
         			.addContainerGap()
-        			.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
         				.addComponent(lblLobbyPrincipal, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
-        				.addGroup(layout.createSequentialGroup()
-        					.addComponent(lblBienvenueUsername)
-        					.addPreferredGap(ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
-        					.addComponent(lblUtilisateursEnligne, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)))
-        			.addPreferredGap(ComponentPlacement.RELATED)
-        			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(ta, GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
-        				.addGroup(layout.createSequentialGroup()
-        					.addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE)
-        					.addPreferredGap(ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-        					.addComponent(lblAmisConnects, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-        					.addGap(4)
-        					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 163, GroupLayout.PREFERRED_SIZE)))
+        				.addComponent(lblWelcome, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
         			.addGap(18)
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(lblAmisConnects, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+        					.addGap(1)
+        					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 134, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.UNRELATED)
+        					.addComponent(lblUtilisateursEnligne, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
+        				.addComponent(scrollPane_1, GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE))
+        			.addGap(9)
         			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
-        				.addComponent(cmdPrompt, GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)
-        				.addComponent(commandBtn, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-        			.addGap(19))
+        				.addComponent(cmdPrompt, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(commandBtn))
+        			.addGap(22))
         );
+        
+        ta = new JTextPane();
+        ta.setEditable(false);
+        ta.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        scrollPane_1.setViewportView(ta);
         
         friendsT = new JTable();
         friendsT.setModel(new DefaultTableModel(
@@ -278,10 +350,12 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     private javax.swing.JScrollPane jScrollPane2;
     private static javax.swing.JTable usernamesT;
-    private JTextArea ta;
-    private JTextArea cmdPrompt;
     private JButton commandBtn;
     private JScrollPane scrollPane;
     private JTable friendsT;
     private JLabel lblAmisConnects;
+    private JTextField cmdPrompt;
+    private JScrollPane scrollPane_1;
+    private JLabel lblWelcome;
+    private JTextPane ta;
 }

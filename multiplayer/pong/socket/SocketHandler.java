@@ -36,14 +36,4 @@ public class SocketHandler {
 			}
 		});
 	}
-        
-    public static void userConnected(String username){
-        JSONObject data = new JSONObject();
-        try {
-            data.put("username", username);
-            socket.emit("userConnected", data);
-        } catch(JSONException e) {
-            
-        }
-    }
 }

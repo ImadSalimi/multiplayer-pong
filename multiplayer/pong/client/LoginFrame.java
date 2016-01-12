@@ -167,7 +167,7 @@ public class LoginFrame extends javax.swing.JFrame {
         } else {
         	SocketHandler.username = username;
         	LobbyFrame l = new LobbyFrame();
-        	SocketHandler.userConnected(username);
+        	SocketHandler.getSocket().emit("userConnected", username);
             this.setVisible(false);
             l.setVisible(true);
             
