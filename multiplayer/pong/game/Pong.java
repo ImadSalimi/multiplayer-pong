@@ -19,7 +19,7 @@ public class Pong extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
-	public void start() {
+	public void startGame() {
 		panel = new PongPanel(this);
 		add(panel);
 	}
@@ -29,10 +29,9 @@ public class Pong extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		SocketHandler.connectSocket();
 		Pong game = new Pong();
-		game.start();
+		game.startGame();
 	}
 
 }

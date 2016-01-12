@@ -38,6 +38,22 @@ public abstract class Paddle {
     public Rectangle getBounds() {
         return new Rectangle(x, y, WIDTH, HEIGHT);
     }
+    
+    public Rectangle getBoundsTop() {
+    	return new Rectangle(x, y, WIDTH, 1);
+    }
+    
+    public Rectangle getBoundsRight() {
+    	return new Rectangle(x + WIDTH, y, 1, HEIGHT);
+    }
+    
+    public Rectangle getBoundsBottom() {
+    	return new Rectangle(x, y + HEIGHT, WIDTH, 1);
+    }
+    
+    public Rectangle getBoundsLeft() {
+    	return new Rectangle(x, y, 1, HEIGHT);
+    }
 
     public void paint(Graphics2D g) {
         g.fillRect(x, y, WIDTH, HEIGHT);

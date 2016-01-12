@@ -2,7 +2,6 @@ package multiplayer.pong.socket;
 
 import java.net.URISyntaxException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

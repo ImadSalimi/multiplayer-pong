@@ -1,41 +1,60 @@
 package multiplayer.pong.game;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.Random;
 
-import javax.swing.JOptionPane;
 
 public class Ball {
-	private static final int SIZE = 30;
+	private static final int SIZE = 20;
     private PongPanel panel;
-    private int x, y, xa = 2, ya = 2;
+    private int x, y, xa, ya;
     
     public Ball(PongPanel panel) {
     	this.panel = panel;
-    	x = panel.game.getWidth() / 2;
-        y = panel.game.getHeight() / 2;
+    	reset();
     }
     
     public void update() {
         x += xa;
         y += ya;
-        if (x <= 0) {
+        if (x + SIZE <= 5) {
             panel.increaseScoreFor(1);
-            xa = -xa;
-        }
-        else if (x >= panel.game.getWidth() - SIZE) {
+            reset();
+        } else if (x >= panel.game.getWidth() - 5) {
             panel.increaseScoreFor(2);
-            xa = -xa;
+            reset();
         }
         else if (y < 0 || y >= panel.game.getHeight() - SIZE)
             ya = -ya;
         checkCollision();
     }
     
-    public void checkCollision() {
-        if (panel.getPlayer(1).getBounds().intersects(getBounds()) || panel.getPlayer(2).getBounds().intersects(getBounds()))
-            xa = -xa;
+    private void reset() {
+    	Random r = new Random();
+    	x = panel.game.getWidth() / 2;
+    	y = panel.game.getHeight() / 2;
+    	xa = 2;
+    	ya = 2;
+    }
+    
+    private void checkCollision() {
+    	if (panel.getPlayer(1).getBounds().intersects(getBounds()) || panel.getPlayer(2).getBounds().intersects(getBounds())) {
+	        if (panel.getPlayer(1).getBoundsRight().intersects(getBounds())) {
+	        	xa = -xa;
+	        	x++;
+	        } else if (panel.getPlayer(2).getBoundsLeft().intersects(getBounds())) {
+	        	xa = -xa;
+	        	x--;
+	        }
+	        if (panel.getPlayer(1).getBoundsTop().intersects(getBounds()) || panel.getPlayer(2).getBoundsTop().intersects(getBounds())) {
+	        	ya = Math.min(ya, -ya);
+	        	y--;
+	        } else if (panel.getPlayer(2).getBoundsBottom().intersects(getBounds()) || panel.getPlayer(2).getBoundsBottom().intersects(getBounds())) {
+	        	ya = Math.max(ya, -ya);
+	        	y++;
+	        }
+    	}
     }
     
     public Rectangle getBounds() {
