@@ -63,5 +63,15 @@ public class UsersDAO extends DAO {
 	            .append("friends", Arrays.asList())
 	    );
 	}
+	
+	public void addFriend(String user1, String user2) {
+		this.collection.updateOne(new Document("name", user1),
+				new Document("$addToSet", new Document("friends", user2)));
+	}
+	
+	public void removeFriend(String user1, String user2) {
+		this.collection.updateOne(new Document("name", user1),
+				new Document("$pull", new Document("friends", user2)));
+	}
 
 }

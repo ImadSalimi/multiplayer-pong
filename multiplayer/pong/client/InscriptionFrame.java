@@ -12,6 +12,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
+import javax.swing.JRootPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -29,6 +31,8 @@ public class InscriptionFrame extends javax.swing.JFrame {
     public InscriptionFrame() {
         initComponents();
         this.getContentPane().setBackground( Color.black );
+        JRootPane rootPane = this.getRootPane();
+    	rootPane.setDefaultButton(Btn);
     }
 
     /**
@@ -89,6 +93,7 @@ public class InscriptionFrame extends javax.swing.JFrame {
         jLabel4.setText("Veuillez saisir un nom d'utilisateur et un mot de passe pour nous rejoindre :D");
         
         JButton btnRetour = new JButton("Retour");
+        btnRetour.setForeground(Color.WHITE);
         btnRetour.setBackground(new Color(0, 51, 51));
         btnRetour.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent evt) {

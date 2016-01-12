@@ -10,6 +10,7 @@ import java.awt.Dimension;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JRootPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import multiplayer.pong.dao.UsersDAO;
@@ -33,6 +34,8 @@ public class LoginFrame extends javax.swing.JFrame {
     	getContentPane().setSize(new Dimension(800, 600));
     	this.getContentPane().setBackground( Color.black );
     	initComponents();
+    	JRootPane rootPane = this.getRootPane();
+    	rootPane.setDefaultButton(loginBtn);
     }
 
     /**

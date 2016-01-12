@@ -1,6 +1,5 @@
 package multiplayer.pong.client;
 
-import multiplayer.pong.exceptions.NoServerException;
 import multiplayer.pong.socket.SocketHandler;
 
 public class Main {

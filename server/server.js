@@ -9,6 +9,9 @@ server.listen(1337, function() {
 var connectedPlayers = [];
 
 io.on('connection', function(socket) {
+	socket.on('getConnectedPlayers', function() {
+		io.emit('connectedPlayers', connectedPlayers);
+	});
 	socket.on('userConnected', function(username){
 		connectedPlayers.push({id: socket.id, username: username});
 		io.emit('connectedPlayers', connectedPlayers);
@@ -17,6 +20,20 @@ io.on('connection', function(socket) {
 			socket.broadcast.emit('userConnected', username);
 		}, 500);
 		console.log(username + " connected!");
+	});
+	socket.on('friendRequest', function(data) {
+		// Check if the recipient is connected
+		if (getPlayerId(data.to) != null) {
+			var id = getPlayerId(data.to);
+			socket.broadcast.to(id).emit('friendRequest', data.from);
+		}		
+	});
+	socket.on('friendRequestAck', function(data) {
+		if (getPlayerId(data.to) != null) {
+			var id = getPlayerId(data.to);
+			socket.broadcast.to(id).emit('friendRequestAck', data.from);
+		}
+		io.emit('connectedPlayers', connectedPlayers);
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {
@@ -27,8 +44,14 @@ io.on('connection', function(socket) {
 			}
 		}
 	});
-	socket.on('lobbySync', function() {
-		socket.emit('lobbySync');
-	});
 });
+
+function getPlayerId(username) {
+	var result = connectedPlayers.filter(function(player) { return player.username == username });
+	if (result.length != 0) {
+		var playerId = result[0].id;
+		return playerId;
+	}
+	return null;
+}
 

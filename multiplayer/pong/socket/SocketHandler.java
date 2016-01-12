@@ -36,4 +36,23 @@ public class SocketHandler {
 			}
 		});
 	}
+	
+	// Lobby emitters
+	public static void friendRequest(String to) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("from", username);
+			data.put("to", to);
+		} catch (JSONException e) {}
+		socket.emit("friendRequest", data);
+	}
+	
+	public static void friendRequestAck(String to) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("from", username);
+			data.put("to", to);
+		} catch (JSONException e) {}
+		socket.emit("friendRequestAck", data);
+	}
 }

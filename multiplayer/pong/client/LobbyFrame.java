@@ -19,6 +19,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -36,7 +37,9 @@ import org.json.JSONException;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import multiplayer.pong.dao.FriendRequestsDAO;
 import multiplayer.pong.dao.UsersDAO;
+import multiplayer.pong.exceptions.UnknownCommandException;
 import multiplayer.pong.models.JTableModel;
 import multiplayer.pong.socket.SocketHandler;
 
@@ -47,6 +50,7 @@ import multiplayer.pong.socket.SocketHandler;
 public class LobbyFrame extends javax.swing.JFrame {
 	private Socket socket;
 	private UsersDAO daoUsers = new UsersDAO();
+	private FriendRequestsDAO daoReq = new FriendRequestsDAO();
 	private Vector<String> connectedPlayers = new Vector<String>();
 	private Vector<String> connectedFriends = new Vector<String>();
     /**
@@ -61,6 +65,8 @@ public class LobbyFrame extends javax.swing.JFrame {
     	getContentPane().setSize(new Dimension(800, 600));
     	getContentPane().setBackground(new Color(0, 0, 0));
         initComponents();
+        JRootPane rootPane = this.getRootPane();
+    	rootPane.setDefaultButton(commandBtn);
         usernamesT.setShowHorizontalLines(false);
         friendsT.setShowHorizontalLines(false);
         ta.setMargin(new Insets(10, 10, 10, 10));
@@ -95,7 +101,21 @@ public class LobbyFrame extends javax.swing.JFrame {
                 getConnectedFriends();
                 refresh();
             }
-        }).on("userDisconnected", new Emitter.Listener() {
+        }).on("friendRequest", new Emitter.Listener() {
+			@Override
+			public void call(Object... arg0) {
+				String from = (String) arg0[0];
+				displayNotification("Vouz avez une demande d'ajout de " + from + "\n"
+						+ "Utilisez la commande '/accepterAmi [nom]' pour confirmer la demande.\n");
+			}
+		}).on("friendRequestAck", new Emitter.Listener() {
+			@Override
+			public void call(Object... arg0) {
+				String username = (String) arg0[0];
+				displayNotification(username + " est maintenant votre ami.\n"
+						+ "Invitez le à une partie en tapant: '/challenge " + username + "'\n");
+			}
+		}).on("userDisconnected", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
 				String username = (String) arg0[0];
@@ -135,11 +155,8 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void welcomeMessage() {
-    	SimpleAttributeSet set = new SimpleAttributeSet();
-    	StyleConstants.setBold(set, true);
-    	StyleConstants.setForeground(set, new Color(81, 20, 237));
-    	appendMessage("Bienvenue à bord!\n"
-    			+ "  >> Pour afficher l'aide, tapez '/help' dans la zone de texte en bas.\n", set);
+    	displayNotification("Bienvenue à bord!\n"
+    			+ "  >> Pour afficher l'aide, tapez '/aide' dans la zone de texte en bas.\n");
     }
     
     private void displayHelp() {
@@ -147,26 +164,95 @@ public class LobbyFrame extends javax.swing.JFrame {
     	StyleConstants.setBold(set, true);
     	StyleConstants.setForeground(set, new Color(48, 140, 38));
     	appendMessage("Instructions:\n"
-    			+ "/help : Afficher ce menu\n", set);
+    			+ "/aide : Affiche ce menu\n"
+    			+ "/ajouter [nom] : Envoie une demande d'ajout à un joueur\n"
+    			+ "/accepterAmi [nom] : Accepte une demande d'ajout reçue\n"
+    			+ "/challenge [nom] : Invite un ami à une partie de Pong\n"
+    			+ "/supprimer [nom] : Supprime le joueur de votre liste d'amis\n", set);
+    }
+    
+    private void displayError(String error) {
+    	SimpleAttributeSet set = new SimpleAttributeSet();
+    	StyleConstants.setBold(set, true);
+    	StyleConstants.setForeground(set, new Color(245, 10, 10));
+    	appendMessage(error, set);
+    }
+    
+    private void displayWarning(String message) {
+    	SimpleAttributeSet set = new SimpleAttributeSet();
+    	StyleConstants.setBold(set, true);
+    	StyleConstants.setForeground(set, new Color(255, 178, 46));
+    	appendMessage(message, set);
+    }
+    
+    private void displayNotification(String message) {
+    	SimpleAttributeSet set = new SimpleAttributeSet();
+    	StyleConstants.setBold(set, true);
+    	StyleConstants.setForeground(set, new Color(81, 20, 237));
+    	appendMessage(message, set);
     }
     
     private void commandBtnActionPerformed(ActionEvent e) {
     	String input = cmdPrompt.getText();
-    	handleCommand(input);
+    	try {
+    		handleCommand(input);
+    	} catch (UnknownCommandException ex) {
+    		displayError(ex.getMessage());
+    	}
     	cmdPrompt.setText("");
     }
     
-    private void handleCommand(String input) {
+    private void handleCommand(String input) throws UnknownCommandException {
     	String regex = "^\\s*\\/(\\w+) ?(\\w+)? ?(\\w+)?\\s*";
     	Pattern pattern = Pattern.compile(regex);
     	Matcher matcher = pattern.matcher(input);
     	if (matcher.matches()) {
     		String command = matcher.group(1);
+    		String arg1 = matcher.group(2);
     		switch (command) {
-    		case "help":
+    		case "aide":
     			displayHelp();
     			break;
+    		case "ajouter":
+    			if (arg1 == null)
+    				throw new UnknownCommandException("Utilisation: /ajouter [nom]\n");
+    			if (daoUsers.findByUsername(arg1) == null) {
+    				displayWarning("Utilisateur inexistant!\n");
+    			} else if (daoUsers.getFriends(SocketHandler.username).contains(arg1)) {
+    				displayWarning("Ce joueur existe déjà dans votre liste d'amis!\n");
+    			} else {
+    				daoReq.send(SocketHandler.username, arg1);
+    				SocketHandler.friendRequest(arg1);
+    				displayNotification("Une demande d'ajout a été envoyée.\n");
+    			}
+    			break;
+    		case "accepterAmi":
+    			if (arg1 == null)
+    				throw new UnknownCommandException("Utilisation: /accepterAmi [nom]\n");
+    			if (daoReq.isPending(arg1, SocketHandler.username)) {
+    				daoReq.accept(arg1, SocketHandler.username);
+    				SocketHandler.friendRequestAck(arg1);
+    				displayNotification("Vous avez accepté la demande d'ajout.\n");
+    			} else {
+    				displayError("Ce joueur ne vous a pas envoyé une demande d'ajout.\n");
+    			}
+    			break;
+    		case "supprimer":
+    			if (arg1 == null)
+    				throw new UnknownCommandException("Utilisation: /accepterAmi [nom]\n");
+    			if (!daoUsers.getFriends(SocketHandler.username).contains(arg1)) {
+    				displayError("Ce joueur n'est pas dans votre liste d'amis.\n");
+    			} else {
+    				daoReq.remove(SocketHandler.username, arg1);
+    				displayNotification("Joueur supprimé de votre liste d'amis.\n");
+    				SocketHandler.getSocket().emit("getConnectedPlayers");
+    			}
+    			break;
+    		default:
+    			throw new UnknownCommandException("Commande inconnue, veuillez revoir le menu '/aide'.\n");
     		}
+    	} else {
+    		throw new UnknownCommandException("Tapez la commande '/aide' pour afficher les commandes disponibles.\n");
     	}
     }
 
