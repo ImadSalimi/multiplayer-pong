@@ -41,6 +41,7 @@ io.on('connection', function(socket) {
 				console.log(connectedPlayers[i].username + " disconnected!");
 				socket.broadcast.emit('userDisconnected', connectedPlayers[i].username);
 				connectedPlayers.splice(i, 1);
+				io.emit('connectedPlayers', connectedPlayers);
 			}
 		}
 	});

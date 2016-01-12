@@ -139,8 +139,14 @@ public class LobbyFrame extends javax.swing.JFrame {
         connectedFriends = res;
     }
     
-    private void refresh(){
-        usernamesT.setModel(new JTableModel(connectedPlayers, usernamesT.getColumnName(0)));
+    private void refresh() {
+    	// List of connected players (without connected friends)
+    	Vector<String> online = new Vector<String>();
+    	for (String username : connectedPlayers) {
+    		if (!connectedFriends.contains(username))
+    			online.add(username);
+    	}
+        usernamesT.setModel(new JTableModel(online, usernamesT.getColumnName(0)));
         friendsT.setModel(new JTableModel(connectedFriends, friendsT.getColumnName(0)));
     }
     
