@@ -4,6 +4,8 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+import multiplayer.pong.socket.SocketHandler;
+
 public class Pong extends JFrame {
 	private final static int W_WIDTH = 800, W_HEIGHT = 600;
 	private PongPanel panel;
@@ -28,6 +30,7 @@ public class Pong extends JFrame {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		SocketHandler.connectSocket();
 		Pong game = new Pong();
 		game.start();
 	}

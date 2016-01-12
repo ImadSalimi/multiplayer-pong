@@ -55,4 +55,14 @@ public class SocketHandler {
 		} catch (JSONException e) {}
 		socket.emit("friendRequestAck", data);
 	}
+	
+	// Game emitters
+	public static void paddleMoved(boolean goingUp, boolean goingDown) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("goingUp", goingUp);
+			data.put("goingDown", goingDown);
+		} catch (JSONException e) {}
+		socket.emit("paddleMoved", data);
+	}
 }

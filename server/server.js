@@ -9,6 +9,7 @@ server.listen(1337, function() {
 var connectedPlayers = [];
 
 io.on('connection', function(socket) {
+	// Lobby
 	socket.on('getConnectedPlayers', function() {
 		io.emit('connectedPlayers', connectedPlayers);
 	});
@@ -34,6 +35,10 @@ io.on('connection', function(socket) {
 			socket.broadcast.to(id).emit('friendRequestAck', data.from);
 		}
 		io.emit('connectedPlayers', connectedPlayers);
+	});
+	// Game
+	socket.on('paddleMoved', function(data) {
+		socket.emit('paddleMoved', {goingUp: data.goingDown, goingDown: data.goingUp});
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {

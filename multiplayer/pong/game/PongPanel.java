@@ -13,17 +13,19 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class PongPanel extends JPanel implements ActionListener, KeyListener {
-	private Pong game;
+	public Pong game;
 	private Ball ball;
-	private Paddle player1, player2;
-	private int score1, score2;
+	private PaddlePlayer player1;
+	private PaddleOpponent player2;
+	private GameState state;
 	
 	public PongPanel(Pong game) {
-		setBackground(Color.WHITE);
+		setBackground(Color.BLACK);
 		this.game = game;
-		ball = new Ball(game);
-		player1 = new Paddle(game, KeyEvent.VK_UP, KeyEvent.VK_DOWN, game.getWidth() - Paddle.WIDTH - 20);
-		player2 = new Paddle(game, KeyEvent.VK_Z, KeyEvent.VK_S, 20);		
+		state = GameState.GAME;
+		ball = new Ball(this);
+		player1 = new PaddlePlayer(this, 20);
+		player2 = new PaddleOpponent(this, game.getWidth() - Paddle.WIDTH - 20);		
 		Timer timer = new Timer(4, this);
 		timer.start();
 		addKeyListener(this);
@@ -35,18 +37,20 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void increaseScoreFor(int id) {
-		if (id == 1) score1++;
-		else score2++;
+		if (id == 1) player1.increaseScore();
+		else player2.increaseScore();
 	}
 	
 	public int getScore(int id) {
-		return id == 1 ? score1 : score2; 
+		return id == 1 ? player1.getScore() : player2.getScore(); 
 	}
 	
 	private void update() {
-		ball.update();
-		player1.update();
-		player2.update();
+		if (state == GameState.GAME) {
+			ball.update();
+			player1.update();
+			player2.update();
+		}
 	}
 
 	@Override
@@ -57,13 +61,11 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		player1.pressed(e.getKeyCode());
-		player2.pressed(e.getKeyCode());
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		player1.released(e.getKeyCode());
-		player2.released(e.getKeyCode());
 	}
 
 	@Override
@@ -80,7 +82,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, game.getWidth(), game.getHeight());
 		g2d.setColor(Color.white);
-		g2d.drawString(game.getPanel().getScore(1) + " : " + game.getPanel().getScore(2), game.getWidth() / 2, 20);
+		g2d.drawString(getScore(1) + " : " + getScore(2), game.getWidth() / 2, 20);
 		
 		ball.paint(g2d);
 		player1.paint(g2d);

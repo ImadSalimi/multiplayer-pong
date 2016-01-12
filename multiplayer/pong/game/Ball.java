@@ -8,33 +8,33 @@ import javax.swing.JOptionPane;
 
 public class Ball {
 	private static final int SIZE = 30;
-    private Pong game;
+    private PongPanel panel;
     private int x, y, xa = 2, ya = 2;
     
-    public Ball(Pong game) {
-    	this.game = game;
-    	x = game.getWidth() / 2;
-        y = game.getHeight() / 2;
+    public Ball(PongPanel panel) {
+    	this.panel = panel;
+    	x = panel.game.getWidth() / 2;
+        y = panel.game.getHeight() / 2;
     }
     
     public void update() {
         x += xa;
         y += ya;
         if (x <= 0) {
-            game.getPanel().increaseScoreFor(1);
+            panel.increaseScoreFor(1);
             xa = -xa;
         }
-        else if (x >= game.getWidth() - SIZE) {
-            game.getPanel().increaseScoreFor(2);
+        else if (x >= panel.game.getWidth() - SIZE) {
+            panel.increaseScoreFor(2);
             xa = -xa;
         }
-        else if (y < 0 || y >= game.getHeight() - SIZE)
+        else if (y < 0 || y >= panel.game.getHeight() - SIZE)
             ya = -ya;
         checkCollision();
     }
     
     public void checkCollision() {
-        if (game.getPanel().getPlayer(1).getBounds().intersects(getBounds()) || game.getPanel().getPlayer(2).getBounds().intersects(getBounds()))
+        if (panel.getPlayer(1).getBounds().intersects(getBounds()) || panel.getPlayer(2).getBounds().intersects(getBounds()))
             xa = -xa;
     }
     

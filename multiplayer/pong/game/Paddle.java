@@ -3,41 +3,36 @@ package multiplayer.pong.game;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Paddle {
+public abstract class Paddle {
     public static final int WIDTH = 20, HEIGHT = 120;
     
-    private Pong game;
-    private int up, down;
-    private int x;
+    protected PongPanel panel;
+    protected int score;
+    protected int x;
     // ya is velocity in the y-axis
-    private int y, ya = 4;
-    private boolean goingUp = false, goingDown = false;
+    protected int y, ya = 4;
+    protected boolean goingUp = false, goingDown = false;
 
     
-    public Paddle(Pong game, int up, int down, int x) {
-        this.game = game;
+    public Paddle(PongPanel panel, int x) {
+        this.panel = panel;
         this.x = x;
-        y = game.getHeight() / 2;
-        this.up = up;
-        this.down = down;
+        y = panel.game.getHeight() / 2;
+        this.score = 0;
     }
 
     public void update() {
         if (goingUp && y > 0) y -= ya;
-        else if (goingDown && y + HEIGHT < game.getHeight()) y += ya;
+        else if (goingDown && y + HEIGHT < panel.game.getHeight()) y += ya;
     }
     
-    public void pressed(int keyCode) {
-        if (keyCode == up)
-            goingUp = true;
-        else if (keyCode == down)
-            goingDown = true;
+    public int getScore() {
+    	return score;
     }
-
-    public void released(int keyCode) {
-        if (keyCode == up || keyCode == down) {
-        	goingUp = goingDown = false;
-        }
+    
+    public Paddle increaseScore() {
+    	score++;
+    	return this;
     }
 
     public Rectangle getBounds() {
