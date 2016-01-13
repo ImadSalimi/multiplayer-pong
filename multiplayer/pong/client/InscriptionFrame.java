@@ -29,6 +29,7 @@ public class InscriptionFrame extends javax.swing.JFrame {
      * Creates new form InscriptionFrame
      */
     public InscriptionFrame() {
+    	setTitle("Inscription - PongNOW!");
         initComponents();
         this.getContentPane().setBackground( Color.black );
         JRootPane rootPane = this.getRootPane();

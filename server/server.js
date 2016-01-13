@@ -36,9 +36,26 @@ io.on('connection', function(socket) {
 		}
 		io.emit('connectedPlayers', connectedPlayers);
 	});
+	socket.on('challenge', function(data) {
+		if (getPlayerId(data.recipient) != null) {
+			var id = getPlayerId(data.recipient);
+			socket.broadcast.to(id).emit('challenge', data.initiator);
+		}
+	});
+	socket.on('challengeAck', function(data) {
+		if (getPlayerId(data.initiator) != null) {
+			var id = getPlayerId(data.initiator);
+			socket.broadcast.to(id).emit('challengeAck', {opponent: data.recipient, accepted: data.accepted});
+		}
+	});
+	socket.on('startGame', function(data) {
+		if (getPlayerId(data.player1) != null && getPlayerId(data.player2) != null) {
+			io.emit('startGame', data);
+		}
+	});
 	// Game
 	socket.on('paddleMoved', function(data) {
-		socket.emit('paddleMoved', {goingUp: data.goingDown, goingDown: data.goingUp});
+		socket.emit('paddleMoved', data);
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {

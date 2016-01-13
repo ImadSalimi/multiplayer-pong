@@ -31,6 +31,7 @@ public class LoginFrame extends javax.swing.JFrame {
      * Creates new form LoginFrame
      */
     public LoginFrame() {
+    	setTitle("Login - PongNOW!");
     	getContentPane().setSize(new Dimension(800, 600));
     	this.getContentPane().setBackground( Color.black );
     	initComponents();

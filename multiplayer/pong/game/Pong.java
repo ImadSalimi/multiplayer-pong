@@ -15,13 +15,10 @@ public class Pong extends JFrame {
 		setTitle("Pong Online");
 		setBackground(Color.white);
 		setResizable(false);
-		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-	}
-	
-	public void startGame() {
 		panel = new PongPanel(this);
 		add(panel);
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	public PongPanel getPanel() {
@@ -31,7 +28,6 @@ public class Pong extends JFrame {
 	public static void main(String[] args) {
 		SocketHandler.connectSocket();
 		Pong game = new Pong();
-		game.startGame();
 	}
 
 }

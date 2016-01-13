@@ -55,6 +55,34 @@ public class SocketHandler {
 		socket.emit("friendRequestAck", data);
 	}
 	
+	public static void challenge(String opponent) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("initiator", username);
+			data.put("recipient", opponent);
+		} catch (JSONException e) {}
+		socket.emit("challenge", data);
+	}
+	
+	public static void challengeAck(String opponent, boolean accepted) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("initiator", opponent);
+			data.put("recipient", username);
+			data.put("accepted", accepted);
+		} catch (JSONException e) {}
+		socket.emit("challengeAck", data);
+	}
+	
+	public static void startGame(String opponent) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("player1", username);
+			data.put("player2", opponent);
+		} catch (JSONException e) {}
+		socket.emit("startGame", data);
+	}
+	
 	// Game emitters
 	public static void paddleMoved(boolean goingUp, boolean goingDown) {
 		JSONObject data = new JSONObject();

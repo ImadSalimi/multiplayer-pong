@@ -42,6 +42,7 @@ public class FriendRequestsDAO extends DAO {
 	public void accept(String from, String to) {
 		daoUsers.addFriend(from, to);
 		daoUsers.addFriend(to, from);
+		this.collection.deleteOne(new Document("from", from).append("to", to));
 	}
 	
 	public void remove(String user1, String user2) {
