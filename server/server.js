@@ -57,10 +57,8 @@ io.on('connection', function(socket) {
 	socket.on('paddleMoved', function(data) {
 		socket.broadcast.emit('paddleMoved', data);
 	});
-	socket.on('ballLaunched', function() {
-		var xa = Math.random() + 2;
-		var ya = Math.random() + 2;
-		io.to(socket.gameRoom).emit('ballLaunched', {xa: xa, ya: ya});
+	socket.on('moveBall', function(data) {
+		io.to(socket.gameRoom).emit('moveBall', data);
 	});
 	// Others
 	socket.on('joinRoom', function(name) {

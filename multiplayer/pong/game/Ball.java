@@ -28,23 +28,23 @@ public class Ball {
     }
     
     public void handleSockets() {
-    	socket.on("ballLaunched", new Emitter.Listener() {
+    	socket.on("moveBall", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
 				JSONObject data = (JSONObject) arg0[0];
 				try {
-					if (panel.game.location.equals("home")) xa = data.getInt("xa");
-					else xa = - data.getInt("xa");
-					ya = data.getInt("ya");
-					panel.state = GameState.PLAYING;
+					if (panel.game.location.equals("home")) x += data.getInt("xa");
+					else x -= data.getInt("xa");
+					y += data.getInt("ya");
 				} catch (JSONException e) {}
 			}
 		});
     }
     
     public void update() {
-    	x += xa;
-    	y += ya;
+    	if (panel.game.location.equals("home")) {
+    		SocketHandler.moveBall(xa, ya);
+    	}
         if (x + SIZE <= 5) {
             panel.increaseScoreFor(2);
             reset();
@@ -61,15 +61,16 @@ public class Ball {
     	panel.state = GameState.PAUSED;
     	x = panel.game.getWidth() / 2;
     	y = panel.game.getHeight() / 2;
+    	Random r = new Random();
+    	xa = r.nextInt(2) + 2;
+    	ya = r.nextInt(2) + 2;
     	// Go again after one second
-    	if (panel.game.location.equals("home")) {
-    		Timer timer = new Timer();
-    		timer.schedule(new TimerTask() {
-    			public void run() {
-    				socket.emit("ballLaunched");
-    			}
-    		}, 1000);
-    	}
+    	Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			public void run() {
+				panel.state = GameState.PLAYING;
+			}
+		}, 1000);
     }
     
     private void checkCollision() {

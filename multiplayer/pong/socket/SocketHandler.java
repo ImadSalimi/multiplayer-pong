@@ -92,4 +92,12 @@ public class SocketHandler {
 		} catch (JSONException e) {}
 		socket.emit("paddleMoved", data);
 	}
+	public static void moveBall(int xa, int ya) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("xa", xa);
+			data.put("ya", ya);
+		} catch (JSONException e) {}
+		socket.emit("moveBall", data);
+	}
 }
