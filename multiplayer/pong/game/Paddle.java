@@ -23,7 +23,7 @@ public abstract class Paddle {
 
     public void update() {
         if (goingUp && y > 0) y -= ya;
-        else if (goingDown && y + HEIGHT < panel.game.getHeight()) y += ya;
+        else if (goingDown && y + HEIGHT < panel.getHeight()) y += ya;
     }
     
     public int getScore() {

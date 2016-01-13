@@ -9,13 +9,15 @@ import multiplayer.pong.socket.SocketHandler;
 public class Pong extends JFrame {
 	private final static int W_WIDTH = 800, W_HEIGHT = 600;
 	private PongPanel panel;
+	public String location;
 	
-	public Pong() {
+	public Pong(String location, String opponent) {
+		this.location = location;
 		setSize(W_WIDTH, W_HEIGHT);
 		setTitle("Pong Online");
 		setBackground(Color.white);
 		setResizable(false);
-		panel = new PongPanel(this);
+		panel = new PongPanel(this, opponent);
 		add(panel);
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -27,7 +29,7 @@ public class Pong extends JFrame {
 	
 	public static void main(String[] args) {
 		SocketHandler.connectSocket();
-		Pong game = new Pong();
+		Pong game = new Pong("Imad", "home");
 	}
 
 }

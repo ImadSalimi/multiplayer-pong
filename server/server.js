@@ -55,7 +55,17 @@ io.on('connection', function(socket) {
 	});
 	// Game
 	socket.on('paddleMoved', function(data) {
-		socket.emit('paddleMoved', data);
+		socket.broadcast.emit('paddleMoved', data);
+	});
+	socket.on('ballLaunched', function() {
+		var xa = Math.random() + 2;
+		var ya = Math.random() + 2;
+		io.to(socket.gameRoom).emit('ballLaunched', {xa: xa, ya: ya});
+	});
+	// Others
+	socket.on('joinRoom', function(name) {
+		socket.join(name);
+		socket.gameRoom = name;
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {

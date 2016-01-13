@@ -11,6 +11,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +44,7 @@ import multiplayer.pong.dao.FriendRequestsDAO;
 import multiplayer.pong.dao.GamesDAO;
 import multiplayer.pong.dao.UsersDAO;
 import multiplayer.pong.exceptions.UnknownCommandException;
+import multiplayer.pong.game.Pong;
 import multiplayer.pong.models.JTableModel;
 import multiplayer.pong.socket.SocketHandler;
 
@@ -127,7 +130,7 @@ public class LobbyFrame extends javax.swing.JFrame {
 				String username = (String) arg0[0];
 				displayWarning(username + " vous invite à une partie de Pong\n");
 				displayHelp("Tapez '/accepter " + username + "' pour joueur contre lui\n"
-						+ "ou '/refuser " + username + "' pour refuser");
+						+ "ou '/refuser " + username + "' pour refuser\n");
 			}
 		}).on("challengeAck", new Emitter.Listener() {
 			@Override
@@ -151,13 +154,27 @@ public class LobbyFrame extends javax.swing.JFrame {
 				try {
 					String player1 = data.getString("player1");
 					String player2 = data.getString("player2");
-					displayNotification("Un défi a commencé: " + player1 + " vs " + player2 + "\n");
+					if (SocketHandler.username.equals(player1) || SocketHandler.username.equals(player2)) {
+						socket.emit("joinRoom", player1);
+						displayWarning("La partie va commencer dans 5 secondes...\n");
+						Timer timer = new Timer();
+						timer.schedule(new TimerTask() {
+							String opponent = SocketHandler.username.equals(player1) ? player2 : player1;
+							String location = SocketHandler.username.equals(player1) ? "home" : "away";
+							public void run() {
+								Pong game = new Pong(location, opponent);
+							}
+						}, 5000);
+					} else {
+						displayNotification("Un défi a commencé: " + player1 + " vs " + player2 + "\n");
+					}
 				} catch (JSONException e) {}
 			}
 		}).on("userDisconnected", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
 				String username = (String) arg0[0];
+				daoGames.cancelRequest(username, null);
 				if (connectedFriends.contains(username))
 					appendMessage("Votre ami " + username + " vient de se déconnecter!\n", null);
 				connectedPlayers.remove(username);
@@ -314,6 +331,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			} else if (daoGames.gameIsPending(SocketHandler.username, arg1)) {
     				displayError("Vous avez déjà invité ce joueur à une partie.\n");
     			} else {
+    				displayNotification("Une invitation a été envoyée.\n");
     				daoGames.initialize(SocketHandler.username, arg1);
     				SocketHandler.challenge(arg1);
     			}
@@ -337,7 +355,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			} else if (!daoGames.gameIsPending(arg1, SocketHandler.username)) {
     				displayWarning("Ce joueur ne vous a pas invité à une partie!\n");
     			} else {
-    				displayNotification("Vous avez refusé l'invitation.");
+    				displayNotification("Vous avez refusé l'invitation.\n");
     				daoGames.cancelRequest(arg1, SocketHandler.username);
     				SocketHandler.challengeAck(arg1, false);
     			}

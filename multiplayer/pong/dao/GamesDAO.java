@@ -39,9 +39,10 @@ public class GamesDAO extends DAO {
 	}
 	
 	public void cancelRequest(String from, String to) {
-		this.collection.deleteOne(new Document("state", "pending")
-				.append("initiator", from)
-				.append("recipient", to));
+		Document query = new Document("$or", Arrays.asList(new Document("state", "ongoing"), new Document("state", "pending")))
+				.append("initiator", from);
+		if (to != null) query.append("recipient", to);
+		this.collection.deleteOne(query);
 	}
 	
 }

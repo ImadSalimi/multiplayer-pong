@@ -12,20 +12,24 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import multiplayer.pong.socket.SocketHandler;
+
 public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	public Pong game;
 	private Ball ball;
 	private PaddlePlayer player1;
 	private PaddleOpponent player2;
-	private GameState state;
+	public GameState state;
+	public String opponent;
 	
-	public PongPanel(Pong game) {
+	public PongPanel(Pong game, String opponent) {
 		setBackground(Color.BLACK);
 		this.game = game;
-		state = GameState.GAME;
+		state = GameState.PAUSED;
 		ball = new Ball(this);
 		player1 = new PaddlePlayer(this, 20);
-		player2 = new PaddleOpponent(this, game.getWidth() - Paddle.WIDTH - 20);		
+		player2 = new PaddleOpponent(this, game.getWidth() - Paddle.WIDTH - 20);
+		this.opponent = opponent;
 		Timer timer = new Timer(4, this);
 		timer.start();
 		addKeyListener(this);
@@ -46,7 +50,7 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 	}
 	
 	public void update() {
-		if (state == GameState.GAME) {
+		if (state == GameState.PLAYING) {
 			ball.update();
 			player1.update();
 			player2.update();
@@ -81,8 +85,9 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		Graphics2D g2d = (Graphics2D) bufferedImage.getGraphics();
 		g2d.setColor(Color.black);
 		g2d.fillRect(0, 0, game.getWidth(), game.getHeight());
+		// Draw the scores
 		g2d.setColor(Color.white);
-		g2d.drawString(getScore(1) + " : " + getScore(2), game.getWidth() / 2, 20);
+		g2d.drawString(SocketHandler.username + " " + getScore(1) + " : " + getScore(2) + " " + opponent, game.getWidth() / 2, 20);
 		
 		ball.paint(g2d);
 		player1.paint(g2d);
