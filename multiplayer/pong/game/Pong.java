@@ -20,7 +20,6 @@ public class Pong extends JFrame {
 		panel = new PongPanel(this, opponent);
 		add(panel);
 		setVisible(true);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	public PongPanel getPanel() {

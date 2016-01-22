@@ -37,6 +37,16 @@ public class SocketHandler {
 	}
 	
 	// Lobby emitters
+	public static void sendMessage(String to, String message) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("from", username);
+			data.put("to", to);
+			data.put("message", message);
+		} catch (JSONException e) {}
+		socket.emit("sendMessage", data);
+	}
+	
 	public static void friendRequest(String to) {
 		JSONObject data = new JSONObject();
 		try {
@@ -92,6 +102,15 @@ public class SocketHandler {
 		} catch (JSONException e) {}
 		socket.emit("paddleMoved", data);
 	}
+	
+	public static void playerScored(int num) {
+		JSONObject data = new JSONObject();
+		try {
+			data.put("num", num);
+		} catch (JSONException e) {}
+		socket.emit("playerScored", data);
+	}
+
 	public static void moveBall(int xa, int ya) {
 		JSONObject data = new JSONObject();
 		try {

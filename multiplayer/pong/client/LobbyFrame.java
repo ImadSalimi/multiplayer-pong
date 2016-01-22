@@ -139,7 +139,7 @@ public class LobbyFrame extends javax.swing.JFrame {
 				try {
 					String opponent = data.getString("opponent");
 					if (!data.getBoolean("accepted")) {
-						displayWarning(opponent + " a refusé votre challenge.\n");
+						displayWarning(opponent + " a refusé votre défi.\n");
 					} else {
 						// Start the game
 						daoGames.startGame(SocketHandler.username, opponent);
@@ -217,8 +217,9 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void welcomeMessage() {
-    	displayNotification("Bienvenue à bord!\n"
-    			+ "  >> Pour afficher l'aide, tapez '/aide' dans la zone de texte en bas.\n");
+    	displayNotification("Bienvenue à  bord!\n"
+    			+ "  >> Pour afficher l'aide, tapez '/aide' dans la zone de texte en bas.\n"
+    			+ "  >> Vous pouvez aussi envoyer des messages publiques depuis cette zone.\n");
     }
     
     private void pendingRequests() {
@@ -238,6 +239,7 @@ public class LobbyFrame extends javax.swing.JFrame {
 	    			+ "/aide : Affiche ce menu\n"
 	    			+ "/ajouter [nom] : Envoie une demande d'ajout à un joueur\n"
 	    			+ "/accepterAmi [nom] : Accepte une demande d'ajout reçue\n"
+	    			+ "/m [nom] : envoie un message privé à un ami connecté\n"
 	    			+ "/challenge [nom] : Invite un ami à une partie de Pong\n"
 	    			+ "/supprimer [nom] : Supprime le joueur de votre liste d'amis\n", set);
     	else
@@ -282,9 +284,22 @@ public class LobbyFrame extends javax.swing.JFrame {
     	if (matcher.matches()) {
     		String command = matcher.group(1);
     		String arg1 = matcher.group(2);
+    		String arg2 = matcher.group(3);
     		switch (command) {
     		case "aide":
     			displayHelp(null);
+    			break;
+    		case "m":
+    			if (arg1 == null || arg2 == null)
+    				throw new UnknownCommandException("Utilisation: /m [nom] [message]\n");
+    			if (!connectedPlayers.contains(arg1)) {
+    				displayWarning("Ce joueur n'est pas connecté en ce moment!\n");
+    			} else if (!connectedPlayers.contains(arg1)) {
+    				displayWarning("Vous ne pouvez envoyer des messages qu'à  vos amis\n");
+    			} else {
+    				
+    				SocketHandler.sendMessage(arg1, arg2);
+    			}
     			break;
     		case "ajouter":
     			if (arg1 == null)
@@ -292,7 +307,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			if (daoUsers.findByUsername(arg1) == null) {
     				displayWarning("Utilisateur inexistant!\n");
     			} else if (daoUsers.getFriends(SocketHandler.username).contains(arg1)) {
-    				displayWarning("Ce joueur existe déjà dans votre liste d'amis!\n");
+    				displayWarning("Ce joueur existe déjà  dans votre liste d'amis!\n");
     			} else {
     				daoReq.send(SocketHandler.username, arg1);
     				SocketHandler.friendRequest(arg1);
@@ -329,7 +344,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			} else if (!connectedPlayers.contains(arg1)) {
     				displayWarning("Ce joueur n'est pas connecté en ce moment!\n");
     			} else if (daoGames.gameIsPending(SocketHandler.username, arg1)) {
-    				displayError("Vous avez déjà invité ce joueur à une partie.\n");
+    				displayError("Vous avez déjà  invité ce joueur à  une partie.\n");
     			} else {
     				displayNotification("Une invitation a été envoyée.\n");
     				daoGames.initialize(SocketHandler.username, arg1);
@@ -364,7 +379,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			throw new UnknownCommandException("Commande inconnue, veuillez revoir le menu '/aide'.\n");
     		}
     	} else {
-    		throw new UnknownCommandException("Tapez la commande '/aide' pour afficher les commandes disponibles.\n");
+    		// Public message
     	}
     }
 
@@ -432,6 +447,7 @@ public class LobbyFrame extends javax.swing.JFrame {
         
         cmdPrompt = new JTextField();
         cmdPrompt.setColumns(10);
+        cmdPrompt.grabFocus();
         
         scrollPane_1 = new JScrollPane();
         

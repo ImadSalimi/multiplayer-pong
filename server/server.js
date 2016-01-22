@@ -7,6 +7,7 @@ server.listen(1337, function() {
 });
 
 var connectedPlayers = [];
+var gamesSync = {};
 
 io.on('connection', function(socket) {
 	// Lobby
@@ -14,6 +15,7 @@ io.on('connection', function(socket) {
 		io.emit('connectedPlayers', connectedPlayers);
 	});
 	socket.on('userConnected', function(username){
+		socket.username = username;
 		connectedPlayers.push({id: socket.id, username: username});
 		io.emit('connectedPlayers', connectedPlayers);
 		// Wait 500 ms before sending the userConnected event
@@ -21,6 +23,10 @@ io.on('connection', function(socket) {
 			socket.broadcast.emit('userConnected', username);
 		}, 500);
 		console.log(username + " connected!");
+	});
+	socket.on('sendMessage', function(data) {
+		var id = getPlayerId(data.to);
+		socket.broadcast.to(id).emit('getMessage', data);
 	});
 	socket.on('friendRequest', function(data) {
 		// Check if the recipient is connected
@@ -57,13 +63,33 @@ io.on('connection', function(socket) {
 	socket.on('paddleMoved', function(data) {
 		socket.broadcast.emit('paddleMoved', data);
 	});
-	socket.on('moveBall', function(data) {
-		io.to(socket.gameRoom).emit('moveBall', data);
+	socket.on('playerScored', function(data) {
+		io.to(socket.gameRoom).emit('pause');
+		var ya = getRandomIntInclusive(2, 3);
+		io.to(socket.gameRoom).emit('reset', ya)
+	});
+	socket.on('initializeGame', function(num) {
+		var now = new Date();
+		if (num == 1)
+			gamesSync[socket.gameRoom].home = now;
+		else if (num == 2)
+			gamesSync[socket.gameRoom].away = now;
+		var homeTime = gamesSync[socket.gameRoom].home;
+		var awayTime = gamesSync[socket.gameRoom].away;
+		if (homeTime !== null && awayTime !== 0) {
+			if (Math.abs(homeTime.getTime() - awayTime.getTime()) <= 100 && !gamesSync[socket.gameRoom].synchro) {
+				gamesSync[socket.gameRoom].synchro = true;
+				var xa = getRandomIntInclusive(2, 3);
+				var ya = getRandomIntInclusive(2, 3);
+				io.to(socket.gameRoom).emit('initializeGame', {xa: xa, ya: ya});
+			}
+		}
 	});
 	// Others
 	socket.on('joinRoom', function(name) {
 		socket.join(name);
 		socket.gameRoom = name;
+		gamesSync[socket.gameRoom] = {home: null, away: 0, synchro: false};
 	});
 	socket.on('disconnect', function() {
 		for(var i = 0; i < connectedPlayers.length; i++) {
@@ -86,3 +112,6 @@ function getPlayerId(username) {
 	return null;
 }
 
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
