@@ -43,6 +43,7 @@ public class Ball {
     	socket.on("reset", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
+				panel.resetPaddles();
 				int ya = (int) arg0[0];
 				reset(0, ya);
 			}

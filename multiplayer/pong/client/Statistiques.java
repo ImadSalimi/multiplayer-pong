@@ -26,8 +26,6 @@ public class Statistiques extends javax.swing.JFrame {
     public Statistiques() {
         initComponents();
         this.getContentPane().setBackground( Color.black );
-
-        
     }
 
     /**

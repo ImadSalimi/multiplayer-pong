@@ -49,6 +49,11 @@ public class PongPanel extends JPanel implements ActionListener, KeyListener {
 		return id == 1 ? player1.getScore() : player2.getScore(); 
 	}
 	
+	public void resetPaddles() {
+		player1.reset();
+		player2.reset();
+	}
+	
 	public void update() {
 		if (state == GameState.PLAYING) {
 			ball.update();

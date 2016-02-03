@@ -16,6 +16,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import multiplayer.pong.dao.UsersDAO;
 import multiplayer.pong.models.User;
 import multiplayer.pong.socket.SocketHandler;
+import java.awt.Font;
 
 /**
  *
@@ -50,11 +51,16 @@ public class LoginFrame extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         loginTxtFeild = new javax.swing.JTextField();
+        loginTxtFeild.setForeground(Color.DARK_GRAY);
+        loginTxtFeild.setFont(new Font("Lucida Sans", Font.BOLD, 16));
         jLabel2 = new javax.swing.JLabel();
         loginBtn = new javax.swing.JButton();
+        loginBtn.setFont(new Font("Trebuchet MS", Font.BOLD, 17));
         loginError = new javax.swing.JLabel();
         pwdError = new javax.swing.JLabel();
         pwdTxtFeild = new javax.swing.JPasswordField();
+        pwdTxtFeild.setForeground(Color.DARK_GRAY);
+        pwdTxtFeild.setFont(new Font("Lucida Sans", Font.PLAIN, 16));
         jButton1 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
@@ -104,30 +110,31 @@ public class LoginFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
         	layout.createParallelGroup(Alignment.TRAILING)
         		.addGroup(layout.createSequentialGroup()
+        			.addGap(188)
         			.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        				.addGroup(layout.createSequentialGroup()
-        					.addGap(322)
-        					.addComponent(jButton1, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE))
-        				.addGroup(layout.createSequentialGroup()
-        					.addGap(188)
-        					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        						.addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 155, GroupLayout.PREFERRED_SIZE)
-        						.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE))
-        					.addGap(18)
-        					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        						.addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-        							.addComponent(pwdError, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        							.addComponent(pwdTxtFeild, GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-        							.addComponent(loginTxtFeild)
-        							.addComponent(loginBtn, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE))
-        						.addGroup(layout.createSequentialGroup()
-        							.addGap(10)
-        							.addComponent(loginError, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE)))))
-        			.addContainerGap(262, Short.MAX_VALUE))
+        				.addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 155, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 147, GroupLayout.PREFERRED_SIZE))
+        			.addGap(18)
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addComponent(pwdTxtFeild, GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+        				.addComponent(loginTxtFeild, 177, 177, 177)
+        				.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        					.addGroup(layout.createSequentialGroup()
+        						.addGap(10)
+        						.addComponent(loginError, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE))
+        					.addComponent(pwdError, GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+        					.addGroup(layout.createSequentialGroup()
+        						.addGap(10)
+        						.addComponent(loginBtn, GroupLayout.PREFERRED_SIZE, 148, GroupLayout.PREFERRED_SIZE))))
+        			.addGap(262))
         		.addGroup(layout.createSequentialGroup()
         			.addContainerGap(270, Short.MAX_VALUE)
         			.addComponent(jLabel3)
         			.addGap(175))
+        		.addGroup(layout.createSequentialGroup()
+        			.addContainerGap(340, Short.MAX_VALUE)
+        			.addComponent(jButton1, GroupLayout.PREFERRED_SIZE, 216, GroupLayout.PREFERRED_SIZE)
+        			.addGap(244))
         );
         layout.setVerticalGroup(
         	layout.createParallelGroup(Alignment.TRAILING)
@@ -137,18 +144,18 @@ public class LoginFrame extends javax.swing.JFrame {
         			.addPreferredGap(ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
         			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
         				.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
-        				.addComponent(loginTxtFeild, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE))
+        				.addComponent(loginTxtFeild, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE))
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(loginError, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-        			.addPreferredGap(ComponentPlacement.UNRELATED)
-        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
-        				.addComponent(pwdTxtFeild, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-        				.addComponent(jLabel2, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
-        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGap(15)
+        			.addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
+        				.addComponent(pwdTxtFeild)
+        				.addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE))
+        			.addGap(23)
         			.addComponent(pwdError, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-        			.addPreferredGap(ComponentPlacement.RELATED)
+        			.addGap(7)
         			.addComponent(loginBtn, GroupLayout.PREFERRED_SIZE, 72, GroupLayout.PREFERRED_SIZE)
-        			.addGap(12)
+        			.addPreferredGap(ComponentPlacement.UNRELATED)
         			.addComponent(jButton1, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
         			.addGap(47))
         );
@@ -167,7 +174,7 @@ public class LoginFrame extends javax.swing.JFrame {
             loginError.setText("Login inexistant !");
         }
         else if(!user.getPassword().equals(pwdTxtFeild.getText())) {
-            pwdError.setText("Mot de passe Ã©rronÃ© !");
+            pwdError.setText("Mot de passe érroné !");
         } else {
         	SocketHandler.username = username;
         	LobbyFrame l = new LobbyFrame();
