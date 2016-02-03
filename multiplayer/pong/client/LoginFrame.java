@@ -167,7 +167,7 @@ public class LoginFrame extends javax.swing.JFrame {
             loginError.setText("Login inexistant !");
         }
         else if(!user.getPassword().equals(pwdTxtFeild.getText())) {
-            pwdError.setText("Mot de passe Ã©rronÃ© !");
+            pwdError.setText("Mot de passe érroné !");
         } else {
         	SocketHandler.username = username;
         	LobbyFrame l = new LobbyFrame();
