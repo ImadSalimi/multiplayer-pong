@@ -113,9 +113,10 @@ public class LobbyFrame extends javax.swing.JFrame {
         }).on("getMessage", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				String from = (String) arg0[0];
-				displayNotification("Vouz avez une demande d'ajout de " + from + "\n");
-				displayHelp("  >> Utilisez la commande '/accepterAmi "+from+"' pour confirmer la demande.\n");
+				JSONObject data = (JSONObject) arg0[0];
+				try {
+					appendMessage(data.getString("from") + ": " + data.getString("message") + "\n", null);
+				} catch (JSONException e) {}
 			}
 		}).on("friendRequest", new Emitter.Listener() {
 			@Override
@@ -285,7 +286,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     }
     
     private void handleCommand(String input) throws UnknownCommandException {
-    	String regex = "^\\s*\\/(\\w+) ?(\\w+)? ?(\\w+)?\\s*";
+    	String regex = "^\\s*\\/(\\w+) ?(\\w+)? ?(.+)?\\s*";
     	Pattern pattern = Pattern.compile(regex);
     	Matcher matcher = pattern.matcher(input);
     	if (matcher.matches()) {
