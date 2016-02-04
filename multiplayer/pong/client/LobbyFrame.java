@@ -294,10 +294,9 @@ public class LobbyFrame extends javax.swing.JFrame {
     				throw new UnknownCommandException("Utilisation: /m [nom] [message]\n");
     			if (!connectedPlayers.contains(arg1)) {
     				displayWarning("Ce joueur n'est pas connecté en ce moment!\n");
-    			} else if (!connectedPlayers.contains(arg1)) {
+    			} else if (!connectedFriends.contains(arg1)) {
     				displayWarning("Vous ne pouvez envoyer des messages qu'à  vos amis\n");
     			} else {
-    				
     				SocketHandler.sendMessage(arg1, arg2);
     			}
     			break;
