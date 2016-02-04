@@ -63,7 +63,7 @@ public class LobbyFrame extends javax.swing.JFrame {
      * Creates new form LobbyFrame
      */
     public LobbyFrame() {
-    	setTitle("Lobby - PongNOW!");
+    	setTitle("Lobby - Pong!");
     	getContentPane().setPreferredSize(new Dimension(800, 600));
     	setResizable(false);
     	setMaximumSize(new Dimension(800, 600));
@@ -110,7 +110,14 @@ public class LobbyFrame extends javax.swing.JFrame {
                 getConnectedFriends();
                 refresh();
             }
-        }).on("friendRequest", new Emitter.Listener() {
+        }).on("getMessage", new Emitter.Listener() {
+			@Override
+			public void call(Object... arg0) {
+				String from = (String) arg0[0];
+				displayNotification("Vouz avez une demande d'ajout de " + from + "\n");
+				displayHelp("  >> Utilisez la commande '/accepterAmi "+from+"' pour confirmer la demande.\n");
+			}
+		}).on("friendRequest", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
 				String from = (String) arg0[0];
@@ -239,7 +246,7 @@ public class LobbyFrame extends javax.swing.JFrame {
 	    			+ "/aide : Affiche ce menu\n"
 	    			+ "/ajouter [nom] : Envoie une demande d'ajout à un joueur\n"
 	    			+ "/accepterAmi [nom] : Accepte une demande d'ajout reçue\n"
-	    			+ "/m [nom] : envoie un message privé à un ami connecté\n"
+	    			+ "/m [nom] [message] : envoie un message privé à un ami connecté\n"
 	    			+ "/challenge [nom] : Invite un ami à une partie de Pong\n"
 	    			+ "/supprimer [nom] : Supprime le joueur de votre liste d'amis\n", set);
     	else

@@ -7,6 +7,7 @@ server.listen(1337, function() {
 });
 
 var connectedPlayers = [];
+var games = {};
 var gamesSync = {};
 
 io.on('connection', function(socket) {
@@ -64,9 +65,13 @@ io.on('connection', function(socket) {
 		socket.broadcast.emit('paddleMoved', data);
 	});
 	socket.on('playerScored', function(data) {
-		io.to(socket.gameRoom).emit('pause');
-		var ya = getRandomIntInclusive(2, 3);
-		io.to(socket.gameRoom).emit('reset', ya)
+		if (games[socket.gameRoom].paused == false) {
+			games[socket.gameRoom].paused = true;
+			io.to(socket.gameRoom).emit('pause');
+			var ya = getRandomIntInclusive(2, 3);
+			io.to(socket.gameRoom).emit('reset', {username: data.username, ya: ya});
+			games[socket.gameRoom].paused = false;
+		}
 	});
 	socket.on('initializeGame', function(num) {
 		var now = new Date();
@@ -79,9 +84,10 @@ io.on('connection', function(socket) {
 		if (homeTime !== null && awayTime !== 0) {
 			if (Math.abs(homeTime.getTime() - awayTime.getTime()) <= 100 && !gamesSync[socket.gameRoom].synchro) {
 				gamesSync[socket.gameRoom].synchro = true;
-				var xa = getRandomIntInclusive(2, 3);
+				var xa = 2;
 				var ya = getRandomIntInclusive(2, 3);
 				io.to(socket.gameRoom).emit('initializeGame', {xa: xa, ya: ya});
+				games[socket.gameRoom] = new Game();
 			}
 		}
 	});
@@ -102,6 +108,12 @@ io.on('connection', function(socket) {
 		}
 	});
 });
+
+function Game() {
+	this.paused = false;
+	this.score1 = 0;
+	this.score2 = 0;
+}
 
 function getPlayerId(username) {
 	var result = connectedPlayers.filter(function(player) { return player.username == username });

@@ -8,7 +8,7 @@ public abstract class Paddle {
     
     protected PongPanel panel;
     protected int score;
-    protected int x, initialX;
+    protected int x;
     // ya is velocity in the y-axis
     protected int y, ya = 4;
     protected boolean goingUp = false, goingDown = false;
@@ -16,7 +16,6 @@ public abstract class Paddle {
     
     public Paddle(PongPanel panel, int x) {
         this.panel = panel;
-        this.initialX = x;
         this.x = x;
         y = panel.game.getHeight() / 2;
         this.score = 0;
@@ -24,7 +23,7 @@ public abstract class Paddle {
 
     public void update() {
         if (goingUp && y > 0) y -= ya;
-        else if (goingDown && y + HEIGHT < panel.getHeight()) y += ya;
+        else if (goingDown && y + HEIGHT < panel.game.getHeight()) y += ya;
     }
     
     public int getScore() {
@@ -37,7 +36,6 @@ public abstract class Paddle {
     }
     
     public void reset() {
-    	x = initialX;
     	y = panel.game.getHeight() / 2;
     }
 

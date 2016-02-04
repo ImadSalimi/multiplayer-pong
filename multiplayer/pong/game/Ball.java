@@ -20,6 +20,7 @@ public class Ball {
     private PongPanel panel;
     private int x, y, xa, ya;
     private boolean gameStarted = false;
+    private boolean resetting = false;
     
     public Ball(PongPanel panel) {
     	this.panel = panel;
@@ -43,21 +44,32 @@ public class Ball {
     	socket.on("reset", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				panel.resetPaddles();
-				int ya = (int) arg0[0];
-				reset(0, ya);
+				if (!resetting) {
+					resetting = true;
+					JSONObject data = (JSONObject) arg0[0];
+					panel.resetPaddles();
+					try {
+						int yv = data.getInt("ya");
+						String username = data.getString("username");
+						if (panel.opponent.equals(username)) panel.increaseScoreFor(2);
+						else panel.increaseScoreFor(1);
+						reset(0, yv);
+					} catch (JSONException e) {}
+				}
 			}
 		}).on("initializeGame", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				JSONObject data = (JSONObject) arg0[0];
-				try {
-					gameStarted = true;
-					int xv = data.getInt("xa");
-					int xa = panel.game.location == "home" ? xv : -xv;
-					int ya = data.getInt("ya");
-					reset(xa, ya);
-				} catch (JSONException e) {}
+				if (!gameStarted) {
+					JSONObject data = (JSONObject) arg0[0];
+					try {
+						gameStarted = true;
+						int xv = data.getInt("xa");
+						int xa = panel.game.location == "home" ? xv : -xv;
+						int ya = data.getInt("ya");
+						reset(xa, ya);
+					} catch (JSONException e) {}
+				}
 			}
 		}).on("pause", new Emitter.Listener() {
 			@Override
@@ -71,13 +83,10 @@ public class Ball {
     	x += xa;
     	y += ya;
         if (x + SIZE <= 5) {
-            panel.increaseScoreFor(2);
-            SocketHandler.playerScored(2);
-        } else if (x >= panel.game.getWidth() - 5) {
-            panel.increaseScoreFor(1);
-            SocketHandler.playerScored(1);
-        }
-        else if (y < 0 || y >= panel.game.getHeight() - SIZE)
+        	SocketHandler.playerScored(panel.opponent);
+        } else if (x >= panel.getWidth() - 5) {
+        	SocketHandler.playerScored(SocketHandler.username);
+        } else if (y < 0 || y >= panel.game.getHeight() - SIZE)
             ya = -ya;
         checkCollision();
     }
@@ -92,6 +101,7 @@ public class Ball {
 		timer.schedule(new TimerTask() {
 			public void run() {
 				panel.state = GameState.PLAYING;
+				resetting = false;
 			}
 		}, 1000);
     }

@@ -25,6 +25,7 @@ public class PaddleOpponent extends Paddle {
 				try {
 					goingUp = data.getBoolean("goingUp");
 					goingDown = data.getBoolean("goingDown");
+					y = data.getInt("y");
 				} catch(JSONException e) {}
 			}
 		});

@@ -94,19 +94,20 @@ public class SocketHandler {
 	}
 	
 	// Game emitters
-	public static void paddleMoved(boolean goingUp, boolean goingDown) {
+	public static void paddleMoved(int y, boolean goingUp, boolean goingDown) {
 		JSONObject data = new JSONObject();
 		try {
+			data.put("y", y);
 			data.put("goingUp", goingUp);
 			data.put("goingDown", goingDown);
 		} catch (JSONException e) {}
 		socket.emit("paddleMoved", data);
 	}
 	
-	public static void playerScored(int num) {
+	public static void playerScored(String username) {
 		JSONObject data = new JSONObject();
 		try {
-			data.put("num", num);
+			data.put("username", username);
 		} catch (JSONException e) {}
 		socket.emit("playerScored", data);
 	}

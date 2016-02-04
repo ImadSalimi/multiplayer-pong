@@ -15,13 +15,13 @@ public class PaddlePlayer extends Paddle {
             goingUp = true;
         else if (keyCode == KeyEvent.VK_DOWN)
             goingDown = true;
-        SocketHandler.paddleMoved(goingUp, goingDown);
+        SocketHandler.paddleMoved(y, goingUp, goingDown);
     }
 
     public void released(int keyCode) {
         if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN) {
         	goingUp = goingDown = false;
-        	SocketHandler.paddleMoved(goingUp, goingDown);
+        	SocketHandler.paddleMoved(y, goingUp, goingDown);
         }
     }
 }
