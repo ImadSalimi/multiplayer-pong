@@ -305,6 +305,7 @@ public class LobbyFrame extends javax.swing.JFrame {
     			} else if (!connectedFriends.contains(arg1)) {
     				displayWarning("Vous ne pouvez envoyer des messages qu'ра vos amis\n");
     			} else {
+    				appendMessage("р " + arg1 + ": " + arg2 + "\n", null);
     				SocketHandler.sendMessage(arg1, arg2);
     			}
     			break;
