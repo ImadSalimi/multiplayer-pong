@@ -180,10 +180,11 @@ public class InscriptionFrame extends javax.swing.JFrame {
         
         String username = loginTxtField.getText();
         User user = daousers.findByUsername(username);
-        if( !(user == null) ){
-            loginError.setText("login existant");
-        }
-        else if(pwdTxtFeild.getText().length()==0){
+        if(!(user == null) ){
+            loginError.setText("Username existant");
+        } else if (username.contains(" ")) {
+        	loginError.setText("Votre nom ne peut pas contenir d'espaces");
+        } else if(pwdTxtFeild.getText().length()==0){
             pwdError.setText("veuillez entrer un mot de pass");
         }
         else

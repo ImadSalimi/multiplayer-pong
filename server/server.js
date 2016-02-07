@@ -1,9 +1,10 @@
 var app = require('express')(),
 	server = require('http').Server(app),
-	io = require('socket.io')(server);
+	io = require('socket.io')(server),
+	port = process.env.PORT || 1337;
 
-server.listen(1337, function() {
-	console.log("Server listening at port 1337...");
+server.listen(port, function() {
+	console.log("Server listening at port "+port+"...");
 });
 
 var connectedPlayers = [];

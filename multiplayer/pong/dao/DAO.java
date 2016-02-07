@@ -14,7 +14,7 @@ public abstract class DAO {
 	protected MongoCollection<Document> collection;
 	
 	public DAO(String collection) {
-		this.uri = new MongoClientURI("mongodb://192.168.1.44:27017/test");
+		this.uri = new MongoClientURI("mongodb://imad:1928@ds045465.mongolab.com:45465/pong");
 		this.mongoClient = new MongoClient(uri);
 		this.db = mongoClient.getDatabase(uri.getDatabase());
 		this.collection = db.getCollection(collection);

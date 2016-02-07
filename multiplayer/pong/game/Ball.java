@@ -20,7 +20,6 @@ public class Ball {
     private PongPanel panel;
     private int x, y, xa, ya;
     private boolean gameStarted = false;
-    private boolean resetting = false;
     
     public Ball(PongPanel panel) {
     	this.panel = panel;
@@ -44,18 +43,15 @@ public class Ball {
     	socket.on("reset", new Emitter.Listener() {
 			@Override
 			public void call(Object... arg0) {
-				if (!resetting) {
-					resetting = true;
-					JSONObject data = (JSONObject) arg0[0];
-					panel.resetPaddles();
-					try {
-						int yv = data.getInt("ya");
-						String username = data.getString("username");
-						if (panel.opponent.equals(username)) panel.increaseScoreFor(2);
-						else panel.increaseScoreFor(1);
-						reset(0, yv);
-					} catch (JSONException e) {}
-				}
+				JSONObject data = (JSONObject) arg0[0];
+				panel.resetPaddles();
+				try {
+					int yv = data.getInt("ya");
+					String username = data.getString("username");
+					if (panel.opponent.equals(username)) panel.increaseScoreFor(2);
+					else panel.increaseScoreFor(1);
+					reset(0, yv);
+				} catch (JSONException e) {}
 			}
 		}).on("initializeGame", new Emitter.Listener() {
 			@Override
@@ -101,7 +97,6 @@ public class Ball {
 		timer.schedule(new TimerTask() {
 			public void run() {
 				panel.state = GameState.PLAYING;
-				resetting = false;
 			}
 		}, 1000);
     }

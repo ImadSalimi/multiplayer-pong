@@ -11,7 +11,7 @@ import io.socket.emitter.Emitter;
 
 public class SocketHandler {
 	private static Socket socket;
-	private static String host = "http://localhost:1337/";
+	private static String host = "http://pong-java.herokuapp.com/";
     public static String username;
     
     public static Socket getSocket() {

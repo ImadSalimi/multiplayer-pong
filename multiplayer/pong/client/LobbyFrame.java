@@ -316,6 +316,8 @@ public class LobbyFrame extends javax.swing.JFrame {
     				displayWarning("Utilisateur inexistant!\n");
     			} else if (daoUsers.getFriends(SocketHandler.username).contains(arg1)) {
     				displayWarning("Ce joueur existe déjà  dans votre liste d'amis!\n");
+    			} else if (arg1.equals(SocketHandler.username)) {
+    				displayError("Opération impossible\n");
     			} else {
     				daoReq.send(SocketHandler.username, arg1);
     				SocketHandler.friendRequest(arg1);
@@ -349,7 +351,9 @@ public class LobbyFrame extends javax.swing.JFrame {
     				throw new UnknownCommandException("Utilisation: /challenge [nom]\n");
     			if (daoUsers.findByUsername(arg1) == null) {
     				displayWarning("Utilisateur inexistant!\n");
-    			} else if (!connectedPlayers.contains(arg1)) {
+    			} else if (arg1.equals(SocketHandler.username)) {
+    				displayError("Opération impossible\n");
+    			}else if (!connectedPlayers.contains(arg1)) {
     				displayWarning("Ce joueur n'est pas connecté en ce moment!\n");
     			} else if (daoGames.gameIsPending(SocketHandler.username, arg1)) {
     				displayError("Vous avez déjà  invité ce joueur à  une partie.\n");
